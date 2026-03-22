@@ -2,22 +2,12 @@
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:1a1b27,100:0d1117&height=220&section=header&text=Harsh%20Vardhan%20Gururani&fontSize=42&fontColor=58a6ff&fontAlignY=35&desc=Engineering%20Physics%20(IDD)%20·%20IIT%20BHU%20Varanasi&descSize=18&descColor=8b949e&descAlignY=55&animation=fadeIn"/>
 
-<a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&duration=3000&pause=1000&color=58A6FF&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=100&lines=Neuronavigation+·+TMS-EEG+·+InVesalius;Quantum+Transport+·+WebGL+Visualization;Biomedical+Signal+Processing+·+Deep+Learning" alt="Typing SVG" />
-</a>
+![](https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&size=20&duration=3000&pause=1000&color=58A6FF&center=true&vCenter=true&width=700&lines=Neuronavigation+%C2%B7+TMS-EEG+%C2%B7+InVesalius;Quantum+Transport+%C2%B7+WebGL+Visualization;Biomedical+Signal+Processing+%C2%B7+Deep+Learning)
 
 <br/>
 
 [![GSoC 2026](https://img.shields.io/badge/GSoC_2026-Applicant-FF6F00?style=for-the-badge&logo=google&logoColor=white)](https://github.com/prometheus5863/invesalius-tep-gsoc2026)
 [![IIT BHU](https://img.shields.io/badge/IIT_BHU-Engineering_Physics-1E88E5?style=for-the-badge)](https://iitbhu.ac.in)
-
-<br/>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/github-snake-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/github-snake.svg" />
-  <img alt="github-snake" src="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/github-snake-dark.svg" />
-</picture>
 
 </div>
 
@@ -57,7 +47,7 @@ interests:
 
 [![GSoC Project](https://img.shields.io/badge/GSoC_2026-InVesalius-FF6F00?style=flat-square&logo=google)](https://github.com/prometheus5863/invesalius-tep-gsoc2026)
 
-> Integrating TMS-EEG electrophysiology into open-source neuronavigation software — real-time TEP waveform rendering, topographic scalp maps, and cortical source overlay.
+> Integrating TMS-EEG electrophysiology into open-source neuronavigation — real-time TEP waveform rendering, topographic scalp maps, and cortical source overlay.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![VTK](https://img.shields.io/badge/VTK-064F8C?style=flat-square)
@@ -70,7 +60,7 @@ interests:
 ### QuantumTrace
 **3D Quantum Transport Visualization**
 
-[![WebGL](https://img.shields.io/badge/WebGL-Interactive_3D-990000?style=flat-square&logo=webgl&logoColor=white)](#)
+[![Repo](https://img.shields.io/badge/GitHub-quantumtrace-181717?style=flat-square&logo=github)](https://github.com/prometheus5863/quantumtrace)
 
 > Interactive WebGL visualization of quantum transport phenomena — wave function propagation, transmission coefficients, and potential landscape rendering in real-time 3D.
 
@@ -89,21 +79,21 @@ interests:
 
 [![F1 Score](https://img.shields.io/badge/F1_Score-0.976-00C853?style=flat-square)](#)
 
-> Deep learning pipeline for automatic artifact rejection in TMS-EEG recordings — CNN architecture achieving F1=0.976 on mixed artifact classification.
+> Deep learning pipeline for automatic artifact rejection in TMS-EEG recordings — CNN1D architecture achieving F1=0.976, false rejection rate 4.9%.
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
 ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
-![scikit--learn](https://img.shields.io/badge/sklearn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/sklearn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
 
 </td>
 <td width="50%" valign="top">
 
-### More Coming Soon
-**Research & Open Source**
+### Backend & Infrastructure
+**FastAPI · WebSocket · SQLite**
 
-[![Open Source](https://img.shields.io/badge/Open_Source-contributions_welcome-red?style=flat-square)](#)
+[![Live API](https://img.shields.io/badge/Live_API-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://invesalius-tep-gsoc2026.onrender.com/docs)
 
-> Always building at the intersection of physics, computation, and neuroscience.
+> Real-time EEG streaming backend with async session management, WebSocket broadcast, and SQLite persistence — deployed and live.
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
