@@ -6,7 +6,6 @@
 
 <br/>
 
-[![GSoC 2026](https://img.shields.io/badge/GSoC_2026-Applicant-FF6F00?style=for-the-badge&logo=google&logoColor=white)](https://github.com/prometheus5863/invesalius-tep-gsoc2026)
 [![IIT BHU](https://img.shields.io/badge/IIT_BHU-Engineering_Physics-1E88E5?style=for-the-badge)](https://iitbhu.ac.in)
 
 </div>
