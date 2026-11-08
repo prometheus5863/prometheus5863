@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://prometheus5863.github.io/prometheus5863/"><img src="assets/header.svg" width="100%" alt="PROMDOM (Harsh Vardhan Gururani): a pixel castle at night"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/"><img src="assets/header-promdom.svg" width="100%" alt="PROMDOM (Harsh Vardhan Gururani): a pixel castle at night"/></a>
 
 </div>
 
