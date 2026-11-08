@@ -1,173 +1,88 @@
 <div align="center">
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:1a1b27,100:0d1117&height=220&section=header&text=Harsh%20Vardhan%20Gururani&fontSize=42&fontColor=58a6ff&fontAlignY=35&desc=Engineering%20Physics%20(IDD)%20·%20IIT%20BHU%20Varanasi&descSize=18&descColor=8b949e&descAlignY=55&animation=fadeIn"/>
-
-![](https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&size=20&duration=3000&pause=1000&color=58A6FF&center=true&vCenter=true&width=700&lines=Neuronavigation+%C2%B7+TMS-EEG+%C2%B7+InVesalius;Quantum+Transport+%C2%B7+WebGL+Visualization;Biomedical+Signal+Processing+%C2%B7+Deep+Learning)
-
-<br/>
-
-[![IIT BHU](https://img.shields.io/badge/IIT_BHU-Engineering_Physics-1E88E5?style=for-the-badge)](https://iitbhu.ac.in)
+<a href="https://prometheus5863.github.io/prometheus5863/"><img src="assets/header.svg" width="100%" alt="PROMETHEUS: a pixel castle at night. Stole fire from physics, forging silicon."/></a>
 
 </div>
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=2"/>
+<img src="assets/stats.svg" width="100%" alt="Player card: breathing pixel sprite and base stats"/>
 
-## About Me
+<a href="https://prometheus5863.github.io/prometheus5863/"><img src="assets/enter.svg" width="100%" alt="Enter the castle: interactive 8-bit portfolio"/></a>
 
-```yaml
-name: Harsh Vardhan Gururani
-institution: IIT BHU Varanasi
-program: Engineering Physics (Integrated Dual Degree)
-email: harshvardhan.gururani.cd.phy22@itbhu.ac.in
+<img src="assets/ribbon-main-quests.svg" width="100%" alt="Main Quests"/>
 
-current_focus:
-  - TEP Visualization Module for InVesalius Navigator (GSoC 2026)
-  - Quantum Transport Simulation & 3D Visualization
-  - Biomedical Signal Processing with Deep Learning
+<p align="center">
+<a href="https://github.com/prometheus5863/muse-memory"><img src="assets/quest-muse-memory.svg" width="49%" alt="muse-memory"/></a>
+<a href="https://github.com/prometheus5863/invesalius-tep-gsoc2026"><img src="assets/quest-invesalius-tep-gsoc2026.svg" width="49%" alt="invesalius-tep-gsoc2026"/></a>
+<a href="https://github.com/prometheus5863/quantumtrace"><img src="assets/quest-quantumtrace.svg" width="49%" alt="quantumtrace"/></a>
+<a href="https://github.com/prometheus5863/downtown-duel"><img src="assets/quest-downtown-duel.svg" width="49%" alt="downtown-duel"/></a>
+<a href="https://github.com/prometheus5863/single-layer-graphene-structure"><img src="assets/quest-single-layer-graphene-structure.svg" width="49%" alt="single-layer-graphene-structure"/></a>
+<a href="https://github.com/prometheus5863/Design-Verification-Roadmap"><img src="assets/quest-design-verification-roadmap.svg" width="49%" alt="Design-Verification-Roadmap"/></a>
+</p>
 
-interests:
-  - Computational Neuroscience
-  - Quantum Physics Simulation
-  - Open-Source Scientific Software
-  - GPU-Accelerated Computing
+<p align="center"><sub>⚔️ click a scroll to enter its dungeon</sub></p>
+
+<img src="assets/ribbon-skill-tree.svg" width="100%" alt="Skill Tree"/>
+
+<img src="assets/skill-tree.svg" width="100%" alt="Skill tree: Arcana (quantum), Sorcery (AI/ML), Craft (systems), Smithing (silicon) and Forging (gamedev) growing from a Physics Core"/>
+
+<img src="assets/ribbon-inventory.svg" width="100%" alt="Inventory"/>
+
+<details>
+<summary><b>🧰 Open the loot chest: side quests</b></summary>
+<br/>
+
+| Side quest | What dropped |
+|---|---|
+| [`triev-whatsapp-crm`](https://github.com/prometheus5863/triev-whatsapp-crm) | WhatsApp CRM + lead-gen prototype for a 2W EV fleet |
+| [`triev-rsa-backend`](https://github.com/prometheus5863/triev-rsa-backend) | Backend service for an EV startup |
+| [`embedded-systems-software`](https://github.com/prometheus5863/embedded-systems-software) | Embedded C drills |
+| [`amlc-er`](https://github.com/prometheus5863/amlc-er) | Amazon ML Challenge entry |
+| [`ibbi-webscrapper-`](https://github.com/prometheus5863/ibbi-webscrapper-) | IBBI data scraper |
+| [`shiv-tour-and-travels`](https://github.com/prometheus5863/shiv-tour-and-travels) | Site for an Uttarakhand travel agency (paid in mountain trips 🏔️) |
+
+</details>
+
+<details>
+<summary><b>🏆 Achievements unlocked</b></summary>
+<br/>
+
+- 🧠 **Merged upstream:** PR #1265 into InVesalius (open-source neuronavigation)
+- 📈 **F1 = 0.976:** LaBraM-based TMS-EEG artifact rejection (CNN1D baseline 0.936)
+- ⚛️ **Guild founder:** co-founded the Quantum Vertical at IIT (BHU)'s Club of Programmers
+- 🔀 **Class change:** Mining → Engineering Physics
+- 🎮 **Shipped to browser:** Downtown Duel
+
+</details>
+
+<details>
+<summary><b>🛠️ Equipped gear</b></summary>
+<br/>
+
+<img src="https://skillicons.dev/icons?i=python,c,js,html,css,pytorch,fastapi,sqlite,godot,linux,git&perline=11" alt="tech stack"/>
+
+</details>
+
+<img src="assets/ribbon-now-grinding.svg" width="100%" alt="Now Grinding"/>
+
+```text
+[████████░░] thesis: graphene → TBG–superconductor junctions
+[██████░░░░] SystemVerilog + UVM  (smithing branch)
+[█████░░░░░] muse: a local model that curates its own memory graph
+[███░░░░░░░] Downtown Duel → a souls-like for phones
 ```
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=2"/>
+<img src="assets/ribbon-contribution-dungeon.svg" width="100%" alt="Contribution Dungeon"/>
 
-## What I Build
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/snake-dark.svg"/>
+  <img src="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/snake.svg" width="100%" alt="a snake devouring my contribution graph"/>
+</picture>
 
-<div align="center">
-<table>
-<tr>
-<td width="50%" valign="top">
+<img src="assets/ribbon-send-a-raven.svg" width="100%" alt="Send a Raven"/>
 
-### TMS-EEG Visualization
-**TEP Module for InVesalius Navigator**
-
-[![GSoC Project](https://img.shields.io/badge/GSoC_2026-InVesalius-FF6F00?style=flat-square&logo=google)](https://github.com/prometheus5863/invesalius-tep-gsoc2026)
-
-> Integrating TMS-EEG electrophysiology into open-source neuronavigation — real-time TEP waveform rendering, topographic scalp maps, and cortical source overlay.
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![VTK](https://img.shields.io/badge/VTK-064F8C?style=flat-square)
-![MNE](https://img.shields.io/badge/MNE--Python-0D47A1?style=flat-square)
-![wxPython](https://img.shields.io/badge/wxPython-2C3E50?style=flat-square)
-
-</td>
-<td width="50%" valign="top">
-
-### QuantumTrace
-**3D Quantum Transport Visualization**
-
-[![Repo](https://img.shields.io/badge/GitHub-quantumtrace-181717?style=flat-square&logo=github)](https://github.com/prometheus5863/quantumtrace)
-
-> Interactive WebGL visualization of quantum transport phenomena — wave function propagation, transmission coefficients, and potential landscape rendering in real-time 3D.
-
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=three.js&logoColor=white)
-![WebGL](https://img.shields.io/badge/WebGL-990000?style=flat-square&logo=webgl&logoColor=white)
-![GLSL](https://img.shields.io/badge/GLSL-5586A4?style=flat-square)
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-### Neural Artifact Rejection
-**CNN-Based EEG Preprocessing**
-
-[![F1 Score](https://img.shields.io/badge/F1_Score-0.976-00C853?style=flat-square)](#)
-
-> Deep learning pipeline for automatic artifact rejection in TMS-EEG recordings — CNN1D architecture achieving F1=0.976, false rejection rate 4.9%.
-
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/sklearn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
-
-</td>
-<td width="50%" valign="top">
-
-### Backend & Infrastructure
-**FastAPI · WebSocket · SQLite**
-
-[![Live API](https://img.shields.io/badge/Live_API-Render-46E3B7?style=flat-square&logo=render&logoColor=white)](https://invesalius-tep-gsoc2026.onrender.com/docs)
-
-> Real-time EEG streaming backend with async session management, WebSocket broadcast, and SQLite persistence — deployed and live.
-
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
-
-</td>
-</tr>
-</table>
-</div>
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=2"/>
-
-## Tech Stack
-
-<div align="center">
-
-### Languages
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
-![GLSL](https://img.shields.io/badge/GLSL-5586A4?style=for-the-badge)
-
-### ML / Scientific
-![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
-![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)
-![MNE](https://img.shields.io/badge/MNE--Python-0D47A1?style=for-the-badge)
-![scikit-learn](https://img.shields.io/badge/sklearn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)
-
-### Visualization & 3D
-![VTK](https://img.shields.io/badge/VTK-064F8C?style=for-the-badge)
-![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)
-![WebGL](https://img.shields.io/badge/WebGL-990000?style=for-the-badge&logo=webgl&logoColor=white)
-![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge)
-
-### Frameworks & Tools
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
-
-</div>
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=2"/>
-
-## GitHub Analytics
-
-<div align="center">
-  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=prometheus5863&show_icons=true&theme=github_dark&hide_border=true&bg_color=0d1117&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9&ring_color=58a6ff" />
-  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=prometheus5863&layout=compact&theme=github_dark&hide_border=true&bg_color=0d1117&title_color=58a6ff&text_color=c9d1d9" />
-</div>
-
-<div align="center">
-  <img width="90%" src="https://github-readme-streak-stats.herokuapp.com/?user=prometheus5863&theme=github-dark-blue&hide_border=true&background=0d1117&stroke=1a1b27&ring=58a6ff&fire=58a6ff&currStreakLabel=58a6ff&sideLabels=8b949e&currStreakNum=c9d1d9&sideNums=c9d1d9&dates=8b949e" />
-</div>
-
-<div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=prometheus5863&theme=github-compact&hide_border=true&bg_color=0d1117&color=58a6ff&line=58a6ff&point=c9d1d9&area=true&area_color=58a6ff" width="95%"/>
-</div>
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0d1117&height=2"/>
-
-## Connect
-
-<div align="center">
-
-[![Email](https://img.shields.io/badge/Email-harshvardhan.gururani-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:harshvardhan.gururani.cd.phy22@itbhu.ac.in)
-[![GitHub](https://img.shields.io/badge/GitHub-prometheus5863-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/prometheus5863)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](#)
-
-<br/>
-
-![Profile Views](https://komarev.com/ghpvc/?username=prometheus5863&color=58a6ff&style=for-the-badge&label=PROFILE+VIEWS)
-
-</div>
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:1a1b27,100:0d1117&height=120&section=footer"/>
+<p align="center">
+<a href="https://www.linkedin.com/in/harsh-vardhan-gururani-9b35862b5"><img src="https://img.shields.io/badge/LinkedIn-1b1210?style=for-the-badge&logo=linkedin&logoColor=d4a24c"/></a>
+<a href="mailto:harshvardhan.gururani.cd.phy22@itbhu.ac.in"><img src="https://img.shields.io/badge/Email-1b1210?style=for-the-badge&logo=gmail&logoColor=d4a24c"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/"><img src="https://img.shields.io/badge/Enter_the_castle-8b1e1e?style=for-the-badge&logo=itchdotio&logoColor=f2c14e"/></a>
+<img src="https://komarev.com/ghpvc/?username=prometheus5863&style=for-the-badge&color=8b1e1e&label=TRAVELLERS" alt="visitors"/>
+</p>
