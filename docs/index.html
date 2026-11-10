@@ -95,6 +95,16 @@ button{font:inherit;cursor:pointer}
 #hero .cta{position:relative;z-index:2;margin:18px 0 60px;font-family:PS2P;font-size:12px;color:var(--parch);
   background:var(--crim);padding:12px 16px;border:0;box-shadow:0 0 0 4px var(--goldd),6px 6px 0 rgba(0,0,0,.5);animation:bob 1s steps(2) infinite}
 @keyframes bob{50%{transform:translateY(4px)}}
+#hero .ctas{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;position:relative;z-index:2}
+#hero .cta{text-decoration:none}
+#hero .cta.alt{background:var(--goldd);color:#fff;animation-delay:.5s}
+#gate{display:block;position:relative;z-index:1;cursor:pointer}
+#gate .castle{transition:transform .15s steps(2);transform-origin:50% 86%}
+#gate:hover .castle{transform:scale(1.03)}
+body.entering #gate .castle{transition:transform .9s cubic-bezier(.6,0,.9,.4);transform:scale(14)}
+body.entering #hero>*:not(#gate){opacity:0;transition:opacity .25s}
+#blackout{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:99;transition:opacity .45s .45s}
+body.entering #blackout{opacity:1}
 
 /* ---------- tower ---------- */
 #tower{position:relative;display:grid;grid-template-columns:minmax(260px,42%) 1fr;max-width:1240px;margin:0 auto;padding:40px 0 120px}
@@ -233,6 +243,7 @@ footer{text-align:center;padding:40px 16px 60px;color:var(--muted);font-size:18p
 </div>
 
 <div id="toasts"></div>
+<div id="blackout"></div>
 
 <header id="hero">
   <div class="stars" id="stars"></div>
@@ -240,8 +251,8 @@ footer{text-align:center;padding:40px 16px 60px;color:var(--muted);font-size:18p
   <div class="px" style="font-size:clamp(10px,1.6vw,14px);color:var(--parch);margin-top:16px;letter-spacing:2px">HARSH VARDHAN GURURANI</div>
   <div class="sub"><span id="typed"></span><span class="cur">_</span></div>
   <div style="font-family:PS2P;font-size:10px;color:var(--parch2);margin-top:8px">PHYSICIST-ENGINEER · LVL 5 · IIT (BHU) VARANASI</div>
-  <img class="castle" src="assets/castle.svg" alt="pixel castle at night">
-  <a class="cta" href="#f-hall">▼ SCROLL TO DESCEND</a>
+  <a id="gate" href="dungeon/#ride" title="Ride into the castle in 3D"><img class="castle" src="assets/castle.svg" alt="pixel castle at night: click to ride in, in 3D"></a>
+  <div class="ctas"><a class="cta alt" id="ride" href="dungeon/#ride">▶ RIDE IN (3D)</a><a class="cta" href="#f-hall">▼ SCROLL TO DESCEND</a></div>
 </header>
 
 <main id="tower">
@@ -327,70 +338,11 @@ footer{text-align:center;padding:40px 16px 60px;color:var(--muted);font-size:18p
 
 <footer>forged by hand in 8-bit · <a href="https://github.com/prometheus5863/prometheus5863">source</a></footer>
 
+<script src="data.js"></script>
 <script>
 (() => {
 /* ================= DATA ================= */
-const BR = [
-  {k:"ARCANA",  label:"Quantum",  c:"var(--a1)"},
-  {k:"SORCERY", label:"AI / ML",  c:"var(--a2)"},
-  {k:"CRAFT",   label:"Systems",  c:"var(--a3)"},
-  {k:"SMITHING",label:"Silicon",  c:"var(--a4)"},
-  {k:"FORGING", label:"Gamedev",  c:"var(--a5)"},
-];
-// rows top→bottom (top = most advanced)
-const TREE = [
- [["TBG","TBG–SC junctions","g","My M.Tech thesis: quantum transport in twisted bilayer graphene–superconductor junctions.","single-layer-graphene-structure"],
-  ["LLM","Local memory model","l","Next for muse: a small local model that curates and groups its own memory graph.","muse-memory"],
-  ["BOT","CRM automation","u","WhatsApp-based CRM and lead generation for a two-wheeler EV fleet.","triev-whatsapp-crm"],
-  ["UVM","UVM testbenches","l","Locked: class-based verification with UVM. On the roadmap.","Design-Verification-Roadmap"],
-  ["SL","Souls-like mobile","l","Locked: a souls-like built for phones. Dream boss fight.",""]],
- [["TX","Quantum transport","u","Transmission, wavefunction propagation, potential landscapes; rendered live in WebGL.","quantumtrace"],
-  ["MEM","Agent memory graph","u","Embeddings → NetworkX over SQLite, community detection, multi-provider LLM fallback.","muse-memory"],
-  ["3D","WebGL visualization","u","Real-time 3D physics visuals in the browser.","quantumtrace"],
-  ["SV","SystemVerilog","g","Grinding now: RTL, assertions, and verification flows.","Design-Verification-Roadmap"],
-  ["DD","Downtown Duel","u","Open-world creature battler: 9 zones, 61 animated monsters, lock-on combat.","downtown-duel"]],
- [["QT","QuTiP","u","Open quantum systems in Python. I keep a fork around for experiments.","qutip"],
-  ["EEG","MNE + CNN1D","u","TMS-EEG preprocessing and artifact rejection: CNN1D F1 0.936, LaBraM variant F1 0.976.","invesalius-tep-gsoc2026"],
-  ["WS","WebSockets","u","Live EEG streaming with async sessions and broadcast.","invesalius-tep-gsoc2026"],
-  ["EMB","Embedded","u","Embedded C on microcontrollers.","embedded-systems-software"],
-  ["GOD","Godot 4","u","Scenes, AI, animation trees; web export.","downtown-duel"]],
- [["PY","NumPy + SciPy","u","The spellbook every physicist carries.",""],
-  ["PT","PyTorch","u","Training and evaluating signal models.","invesalius-tep-gsoc2026"],
-  ["API","FastAPI","u","Async backends, deployed on Render.","invesalius-tep-gsoc2026"],
-  ["C","C","u","Pointers, registers, and patience.","embedded-systems-software"],
-  ["GD","GDScript","u","Godot's native tongue.","downtown-duel"]],
-];
-const QUESTS = [
- {r:"muse-memory",t:"Forge a Memory",b:"SORCERY",s:"ACTIVE",d:4,tags:["Python","NetworkX","SQLite","LLMs"],
-  x:"Local-first agent memory graph plus a multi-provider LLM fallback router.",
-  lore:"Local embeddings feed a NetworkX graph persisted in SQLite; community detection groups memories. When one provider fails, the router falls through to the next."},
- {r:"invesalius-tep-gsoc2026",t:"The Brain's Echo",b:"SORCERY",s:"CLEARED",d:5,tags:["Python","MNE","VTK","FastAPI"],
-  x:"TMS-evoked potential visualization for InVesalius Navigator.",
-  lore:"Three synchronized views: butterfly plot, topographic map, VTK cortical surface. Full MNE preprocessing. Artifact rejection: CNN1D F1 0.936, LaBraM variant F1 0.976. PR #1265 merged upstream.",
-  demo:"https://invesalius-tep-gsoc2026.onrender.com/docs"},
- {r:"quantumtrace",t:"Trace the Wavefunction",b:"ARCANA",s:"CLEARED",d:4,tags:["JavaScript","WebGL","Physics"],
-  x:"Real-time 3D WebGL visualization of quantum transport.",
-  lore:"Wavefunction propagation, transmission coefficients and potential landscapes you can orbit. Built for Qant Labs."},
- {r:"single-layer-graphene-structure",t:"The Thesis Dungeon",b:"ARCANA",s:"ACTIVE",d:5,tags:["Python","NumPy","Matplotlib"],
-  x:"Computational study of single-layer graphene's fundamental properties.",
-  lore:"Groundwork for the final boss: twisted bilayer graphene–superconductor junctions (M.Tech thesis, 2027)."},
- {r:"downtown-duel",t:"Downtown Duel",b:"FORGING",s:"ACTIVE",d:3,tags:["GDScript","Godot 4","Web"],
-  x:"Open-world creature-battle demo that runs in the browser.",
-  lore:"Nine connected zones on a looping road network, 61 animated monsters with simple AI, real-time lock-on combat, and armor that changes the hero's look."},
- {r:"Design-Verification-Roadmap",t:"Into the Silicon",b:"SMITHING",s:"ACTIVE",d:4,tags:["SystemVerilog","UVM","Python"],
-  x:"My roadmap from physics into design verification.",
-  lore:"Verilog and SystemVerilog, UVM testbenches, assertions and formal verification, and the industry flow around them."},
- {r:"triev-whatsapp-crm",t:"The Merchant's Ledger",b:"CRAFT",s:"CLEARED",d:3,tags:["JavaScript","WhatsApp","CRM"],
-  x:"WhatsApp CRM and lead-gen prototype for a 2W EV fleet.",lore:"Built as freelance work for an EV startup run by an IIT (BHU) alum."},
- {r:"embedded-systems-software",t:"Rune-Carving in C",b:"SMITHING",s:"CLEARED",d:2,tags:["C","Embedded"],
-  x:"Embedded C drills and exercises.",lore:"Where the silicon branch started."},
-];
-const GRIND = [
- ["Thesis: graphene → TBG–SC junctions",8,"var(--a1)"],
- ["SystemVerilog + UVM",6,"var(--a4)"],
- ["muse: self-curating memory model",5,"var(--a2)"],
- ["Downtown Duel → souls-like for phones",3,"var(--a5)"],
-];
+const {BR, TREE, QUESTS, GRIND} = window.PROM;
 const LINES = ["Mind the third step. It's loose.","I stole fire. Still waiting on the gods' patch notes.",
  "Have you tried turning the Hamiltonian off and on again?","This castle runs on Python and spite.",
  "Every stair is a quantized energy level.","Click the runes in the Armory.","Down here, the Wi-Fi is terrible."];
@@ -431,6 +383,14 @@ let pi=0, ci=0, del=false;
   else if(ci > 0){ ci--; setTimeout(type, 22); }
   else { del = false; pi = (pi+1) % phrases.length; setTimeout(type, 300); }
 })();
+
+/* 2D castle → 3D ride: zoom through the gate, then hand over to the three.js page */
+document.querySelectorAll("#gate,#ride").forEach(a => a.addEventListener("click", ev => {
+  if (S.reduce || ev.metaKey || ev.ctrlKey) return;
+  ev.preventDefault(); document.body.classList.add("entering");
+  setTimeout(() => { location.href = a.href; }, 950);
+}));
+addEventListener("pageshow", () => document.body.classList.remove("entering"));
 
 /* ================= SKILL TREE ================= */
 const treeEl = document.getElementById("tree"), info = document.getElementById("nodeinfo");

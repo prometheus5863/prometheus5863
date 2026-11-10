@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>PROMDOM · The Ride</title>
+<meta name="description" content="Ride through the castle in 3D: projects, skills and lore on the walls.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='6' y='9' width='4' height='7' fill='%235a3520'/><rect x='5' y='4' width='6' height='5' fill='%23e8590c'/><rect x='7' y='1' width='2' height='4' fill='%23f2c14e'/></svg>">
+<style>
+@font-face{font-family:PS2P;src:url(../assets/PressStart2P.woff2) format('woff2')}
+@font-face{font-family:VT;src:url(../assets/VT323.woff2) format('woff2')}
+:root{--gold:#d4a24c;--gold2:#f2c14e;--goldd:#8a6424;--crim:#8b1e1e;--crim2:#b83232;--parch:#ecd9a8;--parch2:#d6bd85;--ink:#3b2614;--ink2:#7a5a33}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#120d1f;color:var(--parch);font-family:VT,monospace;font-size:22px;
+  -webkit-user-select:none;user-select:none;touch-action:none}
+canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
+.px{font-family:PS2P,monospace}
+a{color:var(--crim)}
+button{font:inherit;cursor:pointer}
+
+#hud{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:14px;padding:10px 14px;
+  background:rgba(10,7,6,.8);border-bottom:4px solid var(--goldd);font-family:PS2P;font-size:10px}
+#floor{color:var(--gold2);min-width:150px}
+#xpwrap{flex:1;max-width:280px;display:flex;align-items:center;gap:8px}
+#xpbar{flex:1;height:12px;background:#000;border:2px solid var(--goldd);position:relative}
+#xpfill{position:absolute;inset:0;width:0;background:repeating-linear-gradient(90deg,var(--gold) 0 10px,var(--gold2) 10px 12px);transition:width .3s steps(6)}
+.hbtn{margin-left:auto;background:var(--crim);color:var(--parch);border:0;padding:8px 10px;font-family:PS2P;font-size:9px;
+  box-shadow:0 0 0 2px var(--goldd);text-decoration:none}
+.hbtn+.hbtn{margin-left:0}
+.hbtn:hover{background:var(--crim2)}
+
+#title{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding-bottom:7vh;text-align:center;cursor:pointer;background:linear-gradient(transparent 55%,rgba(8,5,12,.85))}
+#title h1{font-family:PS2P;font-size:clamp(22px,5vw,46px);margin:0;color:var(--gold2);letter-spacing:4px;text-shadow:4px 4px 0 var(--goldd)}
+#title .nm{font-family:PS2P;font-size:clamp(9px,1.4vw,13px);margin-top:12px;letter-spacing:2px}
+#title .go{font-family:PS2P;font-size:12px;margin-top:22px;background:var(--crim);padding:12px 16px;box-shadow:0 0 0 4px var(--goldd);animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:.55}}
+#title.hide{display:none}
+
+#panel{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;width:min(620px,calc(100vw - 24px));display:none;
+  background:var(--parch);color:var(--ink);padding:14px 18px;font-size:20px;line-height:1.2;
+  box-shadow:0 0 0 4px var(--gold),0 0 0 8px var(--goldd),8px 12px 0 4px rgba(0,0,0,.45)}
+#panel.on{display:block}
+#panel h3{font-family:PS2P;font-size:11px;color:var(--crim);margin:0 0 8px;line-height:1.5}
+#panel p{margin:4px 0}
+#panel .links{margin-top:8px;font-family:PS2P;font-size:10px;line-height:2}
+#panel .links a{margin-right:14px}
+#panel .k{font-family:PS2P;font-size:8px;background:var(--ink);color:var(--parch);padding:2px 4px}
+
+#hint{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:5;background:rgba(10,7,6,.85);border:3px solid var(--goldd);
+  padding:8px 12px;font-size:18px;text-align:center;display:none;white-space:nowrap}
+#hint.on{display:block}
+#hint .k{font-family:PS2P;font-size:8px;background:var(--parch);color:var(--ink);padding:2px 4px}
+
+#pad{position:fixed;right:14px;bottom:14px;z-index:6;display:none;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px}
+#pad button{background:rgba(139,30,30,.85);color:var(--parch);border:0;font-family:PS2P;font-size:14px;box-shadow:0 0 0 3px var(--goldd)}
+#pad button:active{background:var(--crim2)}
+@media (pointer:coarse){#pad{display:grid}#panel{bottom:140px;font-size:17px;max-height:32vh;overflow:auto;touch-action:pan-y}#hint{display:none!important}#toasts{bottom:auto;top:60px}}
+
+#toasts{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;gap:8px}
+.toast{background:#100c0a;border:4px solid var(--gold);padding:8px 12px;font-size:17px;max-width:260px}
+.toast b{display:block;font-family:PS2P;font-size:8px;color:var(--gold2);margin-bottom:5px}
+#fade{position:fixed;inset:0;background:#000;z-index:9;pointer-events:none;opacity:1;transition:opacity .6s}
+#err{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:#120d1f}
+@media (max-width:700px){#xpwrap{display:none}#floor{min-width:0}.hbtn{font-size:8px;padding:7px}}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="hud">
+  <div id="floor">THE GATE</div>
+  <div id="xpwrap"><span>XP</span><div id="xpbar"><div id="xpfill"></div></div><span id="xpnum">0</span></div>
+  <button class="hbtn" id="pix" title="toggle chunky pixels">PIXELS: ON</button>
+  <a class="hbtn" href="../" title="scrolling 2D version">2D VERSION</a>
+</div>
+
+<div id="title">
+  <h1>PROMDOM</h1>
+  <div class="nm">HARSH VARDHAN GURURANI</div>
+  <div class="go">▶ CLICK OR PRESS ANY KEY TO RIDE IN</div>
+</div>
+
+<div id="hint"><span class="k">W</span> <span class="k">S</span> or scroll to ride · <span class="k">A</span> <span class="k">D</span> to steer · mouse to look · <span class="k">E</span> opens a link</div>
+<div id="panel"></div>
+<div id="toasts"></div>
+<div id="pad">
+  <button data-k="a">◀</button><button data-k="w">▲</button><button data-k="d">▶</button>
+  <span></span><button data-k="s">▼</button><span></span>
+</div>
+<div id="fade"></div>
+<div id="err"><div><p class="px" style="color:var(--gold2)">THE GATE IS SEALED</p><p>This browser can't run the 3D castle.</p><p><a class="hbtn" href="../">TAKE THE STAIRS (2D)</a></p></div></div>
+
+<script src="../data.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>
