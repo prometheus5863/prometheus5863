@@ -81,13 +81,13 @@ export function buildJourney(ctx) {
   const postM = lam({ color: "#4a2c18" });
   function gate(i, s) {
     const z = s.start - 1;
-    for (const sx of [-5, 5]) at(box(.6, 6.4, .6, postM), sx, 3.2, z);
-    at(box(11, .6, .6, postM), 0, 6.4, z);
+    for (const sx of [-5, 5]) at(box(.6, 9.6, .6, postM), sx, 4.8, z);
+    at(box(11, .6, .6, postM), 0, 9.6, z);
     const sign = plane(8.4, 1.25, basic({ map: tex(504, 75, (g, w, h) => {
       g.fillStyle = C.goldd; g.fillRect(0, 0, w, h); g.fillStyle = "#1b1210"; g.fillRect(5, 5, w - 10, h - 10);
       g.font = "20px PS2P"; g.fillStyle = C.gold2; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(`${["I", "II", "III", "IV", "V", "VI"][i]} · ${s.name}`, w / 2, h / 2 + 2);
-    }) })); at(sign, 0, 5.4, z + .35);
-    lights(-5, 6.1, z + .4, 5, 6.1, z + .4, 14);
+    }) })); at(sign, 0, 8.6, z + .35);
+    lights(-5, 9.3, z + .4, 5, 9.3, z + .4, 14);
   }
   function billboard(src, x, z, ry, w = 8) {
     const h = w * 10 / 16, g = new THREE.Group(), mat = basic({ color: "#15131c" });
@@ -132,7 +132,7 @@ export function buildJourney(ctx) {
       at(cyl(.1, .55 * k, 1.2 * k, 6, gold), x, y + .6 * k, z);
       const fl = plane(1.4 * k, .8 * k, basic({ color: "#e8590c", side: THREE.DoubleSide })); at(fl, x + .8 * k, y + 1.6 * k, z); anim.push((t) => { fl.rotation.y = Math.sin(t * 3 + x) * .5; });
     }
-    spire(15, z0 - 12, 1); spire(24, z0 - 22, 1.5); spire(16, z0 - 40, .85); spire(36, z0 - 34, 1.2);
+    spire(30, z0 - 6, 1); spire(17, z0 - 42, .85); spire(38, z0 - 36, 1.2); spire(46, z0 - 16, 1.4);
     // college gateway across the road
     const zg = z0 - 33, stoneM = lam({ color: "#d8b98a" }), domeM = lam({ color: "#b5523a" });
     for (const sx of [-6.2, 6.2]) {
@@ -145,8 +145,43 @@ export function buildJourney(ctx) {
     const sign = plane(8.6, 1.1, basic({ map: tex(516, 66, (g, w, h) => { g.fillStyle = "#5a2a1c"; g.fillRect(0, 0, w, h); g.font = "18px PS2P"; g.fillStyle = "#f2e2c0"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("IIT (BHU) · VARANASI", w / 2, h / 2 + 2); }) })); at(sign, 0, 8, zg + .92);
     for (const sx of [-4.2, 4.2]) for (let k = 0; k < 4; k++) { const zz = z0 - 6 - k * 7; at(box(.25, 3.4, .25, postM), sx, 1.7, zz); if (k) lights(sx, 3.3, zz + 7, sx, 3.3, zz, 7); }
     // the back of the wardrobe you came through
-    at(box(3.8, 6.2, 1.2, lam({ color: "#3a2212" })), 0, 3.1, 5.2);
-    const glow = plane(2.6, 5, basic({ color: "#ffd9a0" })); glow.rotation.y = Math.PI; at(glow, 0, 2.9, 4.55);
+    at(box(3.8, 6.2, 1.2, lam({ color: "#3a2212" })), 0, 3.1, 22);   // well behind where the camera arrives
+
+    // --- the temple: platform, steps, pillared hall, bells, lamps ---
+    const tx = 19, tz = z0 - 21, dk = lam({ color: "#8f5a30" });
+    at(box(13, 1, 11, sand2), tx, .5, tz);
+    for (let k = 0; k < 3; k++) at(box(.8, .33 * (3 - k), 5, sand), tx - 6.9 - k * .8, .165 * (3 - k), tz);
+    for (const px of [-5.2, -2.2]) for (const pz of [-4, 0, 4]) { at(cyl(.38, .45, 4.2, 8, sand), tx + px, 3.1, tz + pz); at(box(1.1, .3, 1.1, sand2), tx + px, 5.3, tz + pz); }
+    at(box(5.6, .6, 10.4, sand2), tx - 3.7, 5.75, tz); at(box(4.4, .5, 9, sand), tx - 3.7, 6.3, tz);
+    at(new THREE.Mesh(new THREE.SphereGeometry(1.6, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), sand2), tx - 3.7, 6.55, tz);
+    at(box(6.4, 5, 6.4, sand), tx + 2.6, 3.5, tz);
+    const door = plane(1.8, 3, basic({ color: "#2a1408" })); door.rotation.y = -Math.PI / 2; at(door, tx - .62, 2.5, tz);
+    const lamp = plane(.9, .9, basic({ color: "#ffd166" })); lamp.rotation.y = -Math.PI / 2; at(lamp, tx - .64, 2.1, tz); anim.push((t) => lamp.material.color.setHSL(.11, 1, .6 + .12 * Math.sin(t * 9)));
+    { let y = 6, w = 5.6; for (let i = 0; i < 9; i++) { const h = 1.5 * (1 - i * .04); at(box(w, h, w, i % 2 ? sand2 : sand), tx + 2.6, y + h / 2, tz); for (const [cx2, cz2] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) if (i < 6) at(box(w * .16, h * .7, w * .16, dk), tx + 2.6 + cx2 * w * .5, y + h * .35, tz + cz2 * w * .5); y += h; w *= .82; }
+      at(cyl(.12, .7, 1.5, 6, gold), tx + 2.6, y + .75, tz); const fl = plane(1.8, 1, basic({ color: "#e8590c", side: THREE.DoubleSide })); at(fl, tx + 3.6, y + 2, tz); anim.push((t) => { fl.rotation.y = Math.sin(t * 3) * .5; }); }
+    for (const pz of [-2, 0, 2]) { const bell = new THREE.Group(); const rope = box(.05, .9, .05, dk); rope.position.y = -.45; const b = cyl(.12, .3, .4, 8, gold); b.position.y = -1; bell.add(rope, b); bell.position.set(CX + tx - 5.9, 5.4, tz + pz); scene.add(bell); anim.push((t) => { bell.rotation.x = Math.sin(t * 2 + pz) * .25; }); }
+    for (let k = 0; k < 8; k++) { const f = flame(.55); at(f, tx - 7.2 - (k % 3) * .8, .34 * (3 - (k % 3)) - .3 + .33, tz - 2.2 + k * .62); }
+    lights(tx - 6.4, 5.5, tz - 5, tx - 6.4, 5.5, tz + 5, 12);
+    // --- parasols on the ghat ---
+    const par = lam({ color: "#d8b377" }), bamboo = lam({ color: "#8a6a3c" });
+    for (let k = 0; k < 6; k++) { const pz = z0 - 5 - k * 8.2, px = -11.2 - (k % 2) * 1.4, py = -.3 - (k % 2) * .3; at(cyl(.06, .06, 2.6, 5, bamboo), px, py + 1.3, pz); const c = cone(1.5, .45, 9, par); at(c, px, py + 2.7, pz); c.rotation.z = (k % 3 - 1) * .12; at(box(1.2, .2, .9, lam({ color: "#7a4a2c" })), px, py + .1, pz); }
+    // --- chai stall ---
+    const sx = 9.5, sz = z0 - 7, stripes = tex(32, 8, (g) => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#f2e2c0" : "#b83232"; g.fillRect(i * 4, 0, 4, 8); } });
+    at(box(3.6, 1.1, 1.4, lam({ color: "#6b4226" })), sx, .55, sz);
+    for (const [ax, az] of [[-1.7, -.9], [1.7, -.9], [-1.7, .9], [1.7, .9]]) at(box(.14, 3, .14, bamboo), sx + ax, 1.5, sz + az);
+    const aw = plane(4.2, 2.6, lam({ map: stripes, side: THREE.DoubleSide })); aw.rotation.x = -Math.PI / 2 + .22; aw.rotation.z = Math.PI / 2; at(aw, sx - .3, 3.05, sz); 
+    for (let k = 0; k < 5; k++) at(box(.3, .42, .3, lam({ color: ["#d9822b", "#e6c84a", "#6f9a3a", "#b83232", "#ecd9a8"][k] })), sx - 1.3 + k * .62, 1.31, sz - .3);
+    at(cyl(.22, .28, .4, 8, lam({ color: "#9aa3ad" })), sx + 1.1, 1.3, sz + .35);
+    const csign = plane(2.4, .6, basic({ map: tex(96, 24, (g) => { g.fillStyle = "#1b1210"; g.fillRect(0, 0, 96, 24); g.font = "12px PS2P"; g.fillStyle = "#f2c14e"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("CHAI", 48, 13); }) })); csign.rotation.y = -Math.PI / 2; at(csign, sx - 1.82, 2.5, sz);
+    for (let k = 0; k < 5; k++) { const m = basic({ color: "#ffffff", transparent: true }), st = box(.14, .14, .14, m); at(st, sx + 1.1, 1.6, sz + .35); anim.push((t) => { const u = (t * .5 + k / 5) % 1; st.position.y = 1.6 + u * 1.5; st.position.x = CX + sx + 1.1 + Math.sin(u * 5 + k) * .15; m.opacity = .7 * (1 - u); }); }
+    // --- a cow that has decided the road is hers ---
+    { const cw = lam({ color: "#efe7d6" }), cb = lam({ color: "#6b4a2f" }), g = new THREE.Group();
+      const body = box(1.1, .9, 2, cw); body.position.y = .65; const head = box(.6, .6, .7, cw); head.position.set(0, 1.05, -1.25); const nose = box(.5, .3, .2, lam({ color: "#e0a8a0" })); nose.position.set(0, .92, -1.65);
+      const patch = box(1.12, .5, .7, cb); patch.position.set(0, .8, .3); g.add(body, head, nose, patch);
+      for (const hx of [-.28, .28]) { const h = box(.1, .3, .1, cb); h.position.set(hx, 1.45, -1.2); g.add(h); }
+      for (const [lx, lz] of [[-.4, -.75], [.4, -.75], [-.4, .75], [.4, .75]]) { const l = box(.26, .3, .5, cw); l.position.set(lx, .15, lz); g.add(l); }
+      const tail = box(.08, .7, .08, cb); tail.position.set(0, .7, 1.05); g.add(tail); anim.push((t) => { tail.rotation.z = Math.sin(t * 2.5) * .5; head.rotation.y = Math.sin(t * .6) * .3; });
+      g.position.set(CX + 4.6, 0, z0 - 41); g.rotation.y = 1.9; scene.add(g); }
   }
 
   /* ================= II · SNOW FIELD ================= */
@@ -161,6 +196,27 @@ export function buildJourney(ctx) {
       const m = cone(mr, mh, 6, rock); at(m, mx, mh / 2 - 1, mz); m.rotation.y = mx;
       const c = cone(mr * .42, mh * .42, 6, snow); at(c, mx, mh * .79 - 1 + .2, mz); c.rotation.y = mx;
     }
+    // rolling hills in front of the peaks
+    const hillM = lam({ color: "#eef3f9" }), hillM2 = lam({ color: "#dfe8f2" });
+    for (const [hx, hz, hr, hh] of [[-30, z0 - 20, 16, 7], [-42, z0 - 26, 22, 11], [-27, z0 - 44, 14, 6], [-55, z0 - 46, 20, 13], [31, z0 - 19, 15, 6.5], [44, z0 - 30, 22, 12], [28, z0 - 46, 13, 5.5], [58, z0 - 24, 20, 10], [-20, z0 - 30, 8, 3], [22, z0 - 26, 7, 2.6]]) {
+      const hgeo = new THREE.SphereGeometry(hr, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), hm = new THREE.Mesh(hgeo, (hx + hz) % 2 ? hillM : hillM2); hm.scale.y = hh / hr; at(hm, hx, -.2, hz);
+      for (let k = 0; k < 3; k++) { const a = hx * 1.7 + k * 2.1, d = hr * (.25 + k * .2); const yy = (hh / hr) * Math.sqrt(Math.max(0, hr * hr - d * d)); const g = new THREE.Group(), green = lam({ color: "#2f5a3c" });
+        const c1 = cone(1.1, 3, 6, green); c1.position.y = 1.8; const c2 = cone(.6, 1.1, 6, hillM); c2.position.y = 3; g.add(c1, c2); g.position.set(CX + hx + Math.cos(a) * d, yy - .4, hz + Math.sin(a) * d); scene.add(g); }
+    }
+    // the Shiva Tours shop, open to the road, with a kettle on
+    { const sx = -11.5, sz = z0 - 13, wd = lam({ color: "#7a4a2c" }), wd2 = lam({ color: "#5a3520" });
+      at(box(4, 3.4, 6, wd), sx - 1, 1.7, sz); at(box(1.2, 1.1, 5.2, wd2), sx + 1.7, .55, sz);
+      const rf = box(6.6, .35, 7.2, snow); rf.rotation.z = -.14; at(rf, sx - .2, 3.75, sz);
+      const stripes = tex(32, 8, (g) => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#f4f4f4" : "#2f6b4f"; g.fillRect(i * 4, 0, 4, 8); } });
+      const aw = plane(5.6, 2.2, lam({ map: stripes, side: THREE.DoubleSide })); aw.rotation.x = -Math.PI / 2; aw.rotation.y = -.3; at(aw, sx + 2.2, 3.05, sz);
+      for (const pz of [-2.7, 2.7]) at(box(.14, 3, .14, wd2), sx + 3.1, 1.5, sz + pz);
+      const sg = plane(5.6, 1, basic({ map: tex(280, 50, (g, w, h) => { g.fillStyle = "#1f4a3a"; g.fillRect(0, 0, w, h); g.fillStyle = "#ff9a3c"; g.fillRect(0, h - 5, w, 5); g.font = "12px PS2P"; g.fillStyle = "#ffffff"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("SHIVA TOURS & TRAVELS", w / 2, h / 2); }) })); sg.rotation.y = Math.PI / 2; at(sg, sx + 1.02, 3.0, sz);
+      const win = plane(2.6, 1.3, basic({ color: "#ffd98a" })); win.rotation.y = Math.PI / 2; at(win, sx + 1.02, 1.9, sz);
+      ["#d14b3f", "#3f6fd1", "#e6c84a", "#3fa35a"].forEach((c, k) => at(box(.7, .9, .6, lam({ color: c })), sx + 3 + (k % 2) * .2, .45, sz + 3.6 + k * .8));   // backpacks
+      for (const k of [0, 1]) { const ski = box(.14, 2.6, .06, lam({ color: k ? "#d14b3f" : "#3f6fd1" })); ski.rotation.z = .18; at(ski, sx + 1.25, 1.3, sz - 3.3 - k * .3); }
+      at(cyl(.2, .26, .36, 8, lam({ color: "#9aa3ad" })), sx + 1.7, 1.3, sz - 1.6);
+      for (let k = 0; k < 5; k++) { const m = basic({ color: "#ffffff", transparent: true }), st = box(.14, .14, .14, m); at(st, sx + 1.7, 1.6, sz - 1.6); anim.push((t) => { const u = (t * .5 + k / 5) % 1; st.position.y = 1.6 + u * 1.6; st.position.x = CX + sx + 1.7 + Math.sin(u * 5 + k) * .15; m.opacity = .8 * (1 - u); }); }
+      const f = flame(.9); at(f, sx + 3.1, 3.05, sz - 2.7); }
     // cabin
     const cabinM = lam({ color: "#6b4226" });
     at(box(6, 3.4, 5, cabinM), 14, 1.7, z0 - 34);
@@ -181,7 +237,7 @@ export function buildJourney(ctx) {
     for (let k = 0; k < N; k++) p.set([CX + (r() - .5) * 90, r() * 30, z0 - r() * SEC], k * 3);
     geo.setAttribute("position", new THREE.BufferAttribute(p, 3));
     const pts = new THREE.Points(geo, new THREE.PointsMaterial({ color: "#ffffff", size: 2, sizeAttenuation: false })); pts.frustumCulled = false; scene.add(pts);
-    anim.push((t, dt) => { for (let k = 0; k < N; k++) { let y = p[k * 3 + 1] - dt * (2.5 + (k % 5) * .5); if (y < 0) y += 30; p[k * 3 + 1] = y; p[k * 3] += Math.sin(t + k) * dt * .4; } geo.attributes.position.needsUpdate = true; });
+    anim.push((t, dt) => { pts.visible = ctx.pos().x > 100 && ctx.pos().z < z0 + 22; if (!pts.visible) return; for (let k = 0; k < N; k++) { let y = p[k * 3 + 1] - dt * (2.5 + (k % 5) * .5); if (y < 0) y += 30; p[k * 3 + 1] = y; p[k * 3] += Math.sin(t + k) * dt * .4; } geo.attributes.position.needsUpdate = true; });
   }
 
   /* ================= III · COUNTING HOUSE (AARSH) ================= */
@@ -318,7 +374,7 @@ export function buildJourney(ctx) {
     backDoor = { title: "THE WAY BACK", lines: ["The wardrobe opens both ways. The castle is on the other side."], z: Z_END, side: 0, at: Z_END + 10, reach: 7 };
     exhibits.push(backDoor);
   }
-  SECTIONS.forEach((s, i) => gate(i, s));
+  SECTIONS.forEach((s, i) => { if (i) gate(i, s); });
 
   const sun = new THREE.DirectionalLight("#fff2dc", 1); sun.position.set(CX - 40, 60, 30); sun.target.position.set(CX, 0, -100); scene.add(sun, sun.target); sun.visible = false;
   return { cx: CX, zMax: -2, zMin: Z_END + 8, sections: SECTIONS, exhibits, backDoor, sun, update(t, dt) { for (const f of anim) f(t, dt); } };

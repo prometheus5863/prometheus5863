@@ -590,6 +590,7 @@ function travel(to, z, title, msg) {
     chasePose(); camera.position.copy(chase); camLook.copy(look);
     J.sun.visible = !to.hall;
     if (to.hall) { scene.fog.color.copy(FOG_HALL); scene.fog.near = 22; scene.fog.far = 78; }
+    else { const sc = J.sections.find(c => z <= c.start && z > c.endZ) || J.sections[0]; sky.copy(sc.skyC); scene.fog.color.copy(sky); scene.fog.near = 40; scene.fog.far = 170; hemi.intensity = sc.amb; J.sun.intensity = sc.sun; }
     $("fade").style.opacity = 0; mode = "play"; toast(title, msg);
   }, 700);
 }
