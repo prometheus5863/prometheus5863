@@ -1,4 +1,5 @@
 import * as THREE from "../vendor/three.min.js";
+import { buildJourney } from "./journey.js";
 
 const { BR, TREE, QUESTS, GRIND } = window.PROM;
 const GH = "https://github.com/prometheus5863/";
@@ -40,7 +41,7 @@ const CHAMBERS = [
   { name: "WAR ROOM", xp: 250, ex: QUESTS.map(q => ({
       title: q.t.toUpperCase(), quest: q, color: BR.find(b => b.k === q.b).hex,
       lines: [q.x, q.lore],
-      links: [["REPO", GH + q.r], ...(q.demo ? [["DEMO", q.demo]] : [])],
+      links: [...(q.r ? [["REPO", GH + q.r]] : []), ...(q.demo ? [[q.demo.includes("itch.io") ? "PLAY" : "DEMO", q.demo]] : [])],
   }))},
   { name: "FORGE", xp: 150, ex: [
     { title: "ON THE ANVIL", grind: GRIND, lines: GRIND.map(g => `${g[0]}: ${g[1] * 10}%`) },
@@ -244,15 +245,17 @@ CHAMBERS.forEach((ch, i) => {
 });
 
 /* ---------------- exhibits ---------------- */
-for (const ex of exhibits) {
+function placeBoard(ex, cx = 0, wallTorch = true) {
   const g = new THREE.Group();
   const face = new THREE.MeshBasicMaterial({ map: boardTex(ex) });
   const b = new THREE.Mesh(new THREE.BoxGeometry(6.6, 4.33, .18), [wood, wood, wood, wood, face, wood]); b.position.y = 3.7; g.add(b);
   for (const x of [-2.9, 2.9]) { const p = box(.22, 1.6, .22, wood); p.position.set(x, .8, 0); g.add(p); }
-  g.position.set(ex.side * 6.3, 0, ex.z); g.rotation.y = -ex.side * 0.8; scene.add(g);
+  g.position.set(cx + ex.side * 6.3, 0, ex.z); g.rotation.y = -ex.side * 0.8; scene.add(g);
+  if (!wallTorch) return;
   const t = box(.12, .7, .12, wood); t.position.set(ex.side * (W / 2 - .3), 5.9, ex.z - 2.2); scene.add(t);
   const f = flame(1); f.position.set(ex.side * (W / 2 - .3), 6.25, ex.z - 2.2); scene.add(f);
 }
+for (const ex of exhibits) placeBoard(ex);
 /* ---------------- wall pictures: what each quest does ----------------
    Drawn illustrations by default. To use a real screenshot, add  shot: "shots/<file>.png"  to the
    quest in data.js and drop the image in docs/dungeon/shots/. */
@@ -321,20 +324,20 @@ const ART = {
 for (const ex of exhibits) {
   if (!ex.quest) continue;
   const q = ex.quest, g = new THREE.Group();
-  const pic = new THREE.MeshBasicMaterial({ map: tex(320, 200, (c, w, h) => { c.fillStyle = "#0e0b14"; c.fillRect(0, 0, w, h); ART[q.r]?.(c, rng(q.r.length * 977 + 3)); }) });
+  const pic = new THREE.MeshBasicMaterial({ map: tex(320, 200, (c, w, h) => { c.fillStyle = "#0e0b14"; c.fillRect(0, 0, w, h); const key = q.r || q.id; ART[key]?.(c, rng(key.length * 977 + 3)); }) });
   if (q.shot) new THREE.TextureLoader().load(q.shot, (t) => { t.colorSpace = THREE.SRGBColorSpace; pic.map = t; pic.needsUpdate = true; });
   const frame = box(6.9, 4.5, .16, lam({ color: "#8a6424" })); g.add(frame);
   const m = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 4), pic); m.position.z = .09; g.add(m);
   const cap = new THREE.Mesh(new THREE.PlaneGeometry(6.9, .62), new THREE.MeshBasicMaterial({ map: tex(552, 50, (c, w, h) => {
     c.fillStyle = "#1b1210"; c.fillRect(0, 0, w, h); c.fillStyle = C.goldd; c.fillRect(0, 0, w, 4);
-    c.font = "16px PS2P"; c.fillStyle = C.gold2; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(q.r.toUpperCase().slice(0, 30), w / 2, h / 2 + 3);
+    c.font = "16px PS2P"; c.fillStyle = C.gold2; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText((q.r || q.id).toUpperCase().slice(0, 30), w / 2, h / 2 + 3);
   }) })); cap.position.set(0, -2.6, .09); g.add(cap);
   g.position.set(ex.side * (W / 2 - .1), 5.6, ex.z + 5.6); g.rotation.y = -ex.side * Math.PI / 2; scene.add(g);
 }
 // end wall: contact board
 const endCh = CHAMBERS[CHAMBERS.length - 1];
 {
-  const ex = endCh.end; ex.z = L_END; ex.side = 0; ex.isEnd = true; exhibits.push(ex);
+  const ex = endCh.end; ex.z = L_END; ex.side = 0; ex.at = L_END + 9; ex.reach = 8; exhibits.push(ex);
   const m = new THREE.Mesh(new THREE.BoxGeometry(10, 6.56, .2), [wood, wood, wood, wood, new THREE.MeshBasicMaterial({ map: boardTex(ex) }), wood]);
   m.position.set(0, 4.6, L_END + .15); scene.add(m);
   for (const s of [-1, 1]) { const f = flame(1.6); f.position.set(s * 6.2, 4.4, L_END + .5); scene.add(f); const t = box(.16, 1, .16, wood); t.position.set(s * 6.2, 3.9, L_END + .5); scene.add(t); }
@@ -493,12 +496,45 @@ let riderTop, torchLight;
   torchLight = new THREE.PointLight("#ffb060", 70, 30, 1.5); torchLight.position.set(.74, 2.3, -.05); riderTop.add(torchLight);
 }
 
+/* ---------------- the wardrobe: a side door to the road behind the castle ---------------- */
+const WZ = CHAMBERS[0].endZ + 5, wardrobe = { title: "THE WARDROBE", side: -1, z: WZ, at: WZ + 2, reach: 5.5,
+  lines: ["Cold air and string lights. Something on the other side smells like the ghats.", "Step through to ride the road from Kashi: every job I've done, one world each."] };
+const wardrobeAnim = [];
+{
+  const dark = lam({ color: "#3a2212" }), S = -1, x = S * (W / 2 - .9);
+  const cab = box(1.6, 6.4, 4, dark); cab.position.set(x, 3.2, WZ); scene.add(cab);
+  const top = box(2, .5, 4.6, lam({ color: "#5a3520" })); top.position.set(x, 6.6, WZ); scene.add(top);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 5.4), new THREE.MeshBasicMaterial({ color: "#cfe6ff" })); glow.rotation.y = -S * Math.PI / 2; glow.position.set(x - S * .82, 3, WZ); scene.add(glow);
+  for (const sd of [-1, 1]) { const d = box(.14, 5.6, 1.5, lam({ color: "#5a3520" })); d.position.set(x - S * 1.25, 3, WZ + sd * 1.95); d.rotation.y = S * sd * .55; scene.add(d); }
+  const cols = ["#ff5a5a", "#ffd166", "#6fd08c", "#6fb7ff", "#d58cff"].map(c => new THREE.MeshBasicMaterial({ color: c }));
+  cols.forEach((m, k) => { const base = m.color.clone(); wardrobeAnim.push((t) => m.color.copy(base).multiplyScalar(Math.sin(t * 4 + k * 1.3) > 0 ? 1 : .25)); });
+  for (let k = 0; k < 22; k++) { const f = k / 21, b = box(.16, .16, .16, cols[k % 5]); b.position.set(x - S * .95, f < .3 ? .4 + f / .3 * 6.3 : f > .7 ? .4 + (1 - f) / .3 * 6.3 : 6.9, f < .3 ? WZ - 2.3 : f > .7 ? WZ + 2.3 : WZ - 2.3 + (f - .3) / .4 * 4.6); scene.add(b); }
+  // floor tiles that light up one after another, leading from the carpet to the doors
+  const tiles = []; for (let k = 0; k < 5; k++) { const m = new THREE.MeshBasicMaterial({ color: "#6fb7ff" }), tl = box(.7, .06, .7, m); tl.position.set(S * (2.6 + k * 1.05), .05, WZ); scene.add(tl); tiles.push(m); }
+  wardrobeAnim.push((t) => { tiles.forEach((m, k) => m.color.setHSL(.58, .9, .18 + .5 * Math.max(0, Math.sin(t * 3 - k * .8)))); glow.material.color.setHSL(.58, .8, .8 + .1 * Math.sin(t * 2.5)); });
+  // snow drifting out of the doors
+  const N = 70, sp = new Float32Array(N * 3), sg = new THREE.BufferGeometry(); const r = rng(3131);
+  for (let k = 0; k < N; k++) sp.set([x - S * (1 + r() * 5), r() * 5.5, WZ + (r() - .5) * 3], k * 3);
+  sg.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: "#ffffff", size: 2, sizeAttenuation: false })));
+  wardrobeAnim.push((t, dt) => { for (let k = 0; k < N; k++) { sp[k * 3] -= S * dt * (.6 + (k % 4) * .2); sp[k * 3 + 1] -= dt * .5; if (Math.abs(sp[k * 3] - x) > 6.5 || sp[k * 3 + 1] < 0) { sp[k * 3] = x - S; sp[k * 3 + 1] = 1 + ((k * 37) % 45) / 10; } } sg.attributes.position.needsUpdate = true; });
+  const pl = new THREE.PointLight("#9fd0ff", 45, 16, 1.5); pl.position.set(x - S * 2.5, 3.5, WZ); scene.add(pl);
+  exhibits.push(wardrobe);
+}
+const J = buildJourney({ THREE, scene, tex, rng, box, lam, flame, placeBoard, C, GH, pos: () => rig.position });
+const HALL = { cx: 0, zMax: 1, zMin: L_END + 8, exhibits, chambers: CHAMBERS, hall: true };
+const ROAD = { cx: J.cx, zMax: J.zMax, zMin: J.zMin, exhibits: J.exhibits, chambers: J.sections };
+let track = HALL;
+wardrobe.action = ["STEP THROUGH", () => travel(ROAD, J.zMax - 2, "THE ROAD FROM KASHI", "The wardrobe opens onto the ghats")];
+J.backDoor.action = ["BACK TO THE CASTLE", () => travel(HALL, WZ - 3, "BACK IN THE CASTLE", "The hall is as you left it")];
+const FOG_HALL = new THREE.Color("#0b0806");
+
 /* ---------------- state ---------------- */
 const keys = {};
 let mode = "loading", vz = 0, vx = 0, mouseX = 0, lookYaw = 0, gallop = 0, enterT = 0, xp = 0, activeEx = null;
 const pos = rig.position; pos.set(0, 0, 34);
 const TITLE_POS = new THREE.Vector3(0, 10.5, 47), TITLE_LOOK = new THREE.Vector3(0, 10.5, 6);
-const seen = new Set(), XPMAX = CHAMBERS.reduce((a, c) => a + c.xp, 0);
+const seen = new Set(), XPMAX = [...CHAMBERS, ...J.sections].reduce((a, c) => a + c.xp, 0);
 const camLook = TITLE_LOOK.clone(); camera.position.copy(TITLE_POS); camera.lookAt(camLook);
 
 let readyCount = 0;
@@ -517,7 +553,7 @@ addEventListener("keydown", e => {
   if (mode === "title") { start(); return; }
   const k = e.key.toLowerCase();
   keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = true;
-  if (k === "e" && activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener");
+  if (k === "e" && mode === "play") { if (activeEx?.action) activeEx.action[1](); else if (activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener"); }
   if (["arrowup", "arrowdown", " "].includes(k)) e.preventDefault();
 });
 addEventListener("keyup", e => { const k = e.key.toLowerCase(); keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = false; });
@@ -540,15 +576,30 @@ function showPanel(ex) {
   const p = $("panel");
   if (!ex) { p.classList.remove("on"); return; }
   p.innerHTML = `<h3>${esc(ex.title)}</h3>` + ex.lines.map(l => `<p>${esc(l)}</p>`).join("") +
-    (ex.links ? `<div class="links">${ex.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">▶ ${n}</a>`).join("")}<span class="k">E</span></div>` : "");
+    (ex.links ? `<div class="links">${ex.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">▶ ${n}</a>`).join("")}<span class="k">E</span></div>` : "") +
+    (ex.action ? `<div class="links"><a href="#" id="act">▶ ${ex.action[0]}</a><span class="k">E</span></div>` : "");
+  if (ex.action) p.querySelector("#act").addEventListener("click", (e) => { e.preventDefault(); ex.action[1](); });
   p.classList.add("on");
+}
+
+function travel(to, z, title, msg) {
+  if (mode !== "play") return;
+  mode = "warp"; $("fade").style.opacity = 1; showPanel(null);
+  setTimeout(() => {
+    track = to; pos.set(to.cx, 0, z); vz = vx = 0; lookYaw = 0;
+    chasePose(); camera.position.copy(chase); camLook.copy(look);
+    J.sun.visible = !to.hall;
+    if (to.hall) { scene.fog.color.copy(FOG_HALL); scene.fog.near = 22; scene.fog.far = 78; }
+    $("fade").style.opacity = 0; mode = "play"; toast(title, msg);
+  }, 700);
 }
 
 /* ---------------- loop ---------------- */
 let last = performance.now(), t = 0; const tmp = new THREE.Vector3(), chase = new THREE.Vector3(), look = new THREE.Vector3();
 function chasePose() {
-  chase.set(pos.x * .55 - Math.sin(lookYaw) * 2.5, 5.6, pos.z + 10.5);
-  look.set(pos.x * .8 + Math.sin(lookYaw) * 12, 3.4, pos.z - 11);
+  const lx = pos.x - track.cx;
+  chase.set(track.cx + lx * .55 - Math.sin(lookYaw) * 2.5, 5.6, pos.z + 10.5);
+  look.set(track.cx + lx * .8 + Math.sin(lookYaw) * 12, 3.4, pos.z - 11);
 }
 function tick() {
   const now = performance.now(), dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
@@ -561,8 +612,8 @@ function tick() {
     vz += az * 34 * dt; vz -= vz * Math.min(1, (az ? 1.6 : 3.2) * dt); vz = Math.max(-15, Math.min(8, vz));
     vx += ax * 30 * dt; vx -= vx * Math.min(1, 6 * dt);
     pos.z += vz * dt; pos.x += vx * dt;
-    if (pos.x > LANE) { pos.x = LANE; vx = 0; } if (pos.x < -LANE) { pos.x = -LANE; vx = 0; }
-    if (pos.z > 1) { pos.z = 1; vz = 0; } if (pos.z < L_END + 8) { pos.z = L_END + 8; vz = 0; }
+    if (pos.x > track.cx + LANE) { pos.x = track.cx + LANE; vx = 0; } if (pos.x < track.cx - LANE) { pos.x = track.cx - LANE; vx = 0; }
+    if (pos.z > track.zMax) { pos.z = track.zMax; vz = 0; } if (pos.z < track.zMin) { pos.z = track.zMin; vz = 0; }
   }
 
   // horse animation
@@ -583,12 +634,18 @@ function tick() {
   if (t > nextFlash) { flash = 1; nextFlash = t + 2.5 + Math.random() * 6; strike(); if (Math.random() < .6) setTimeout(() => { flash = Math.max(flash, .85); }, 140); }
   flash = Math.max(0, flash - dt * 3);
   const outside = camera.position.z > 2;
-  sky.lerpColors(SKY0, SKY1, flash * .85);
+  const onRoad = track !== HALL, sec = onRoad ? (J.sections.find(c => pos.z <= c.start && pos.z > c.endZ) || J.sections[0]) : null;
+  if (onRoad) {
+    sky.lerp(sec.skyC, Math.min(1, 2.5 * dt)); scene.fog.color.copy(sky);
+    scene.fog.near += (40 - scene.fog.near) * Math.min(1, 2 * dt); scene.fog.far += (170 - scene.fog.far) * Math.min(1, 2 * dt);
+    J.sun.intensity += (sec.sun - J.sun.intensity) * Math.min(1, 2 * dt);
+  } else sky.lerpColors(SKY0, SKY1, flash * .85);
+  J.update(t, dt); for (const f of wardrobeAnim) f(t, dt);
   for (const m of outMats) m.color.copy(m.userData.base).multiplyScalar(.72 + flash * .28);
   castleMat.color.setScalar(.84 + flash * .16);
   bolt.visible = outside && flash > .5;
   winMat.color.lerpColors(WIN0, WIN1, flash);
-  hemi.intensity = 1.5 + flash * .45;
+  hemi.intensity = onRoad ? hemi.intensity + (sec.amb - hemi.intensity) * Math.min(1, 2 * dt) : 1.5 + flash * .45;
   rain.visible = outside;
   if (outside) {
     for (let i = 0; i < RAIN; i++) { const k = i * 6; let y = rainPos[k + 1] - 42 * dt; if (y < 0) y += 44; rainPos[k + 1] = y; rainPos[k + 4] = y - 1.5; }
@@ -600,14 +657,14 @@ function tick() {
 
   // nearest exhibit
   let near = null, best = 1e9;
-  if (mode === "play") for (const ex of exhibits) {
-    const d = Math.abs(pos.z - (ex.z + (ex.isEnd ? 9 : 5)));
-    if (d < (ex.isEnd ? 8 : 4.6) && d < best) { best = d; near = ex; }
+  if (mode === "play") for (const ex of track.exhibits) {
+    const d = Math.abs(pos.z - (ex.at ?? ex.z + 5));
+    if (d < (ex.reach ?? 4.6) && d < best) { best = d; near = ex; }
   }
   showPanel(near);
 
   // camera
-  const want = mouseX * 0.55 + (near && !near.isEnd ? near.side * 0.22 : 0);
+  const want = mouseX * 0.55 + (near ? near.side * 0.22 : 0);
   lookYaw += (want - lookYaw) * Math.min(1, 4 * dt);
   chasePose();
   if (mode === "title" || mode === "loading") { camera.position.copy(TITLE_POS); camLook.copy(TITLE_LOOK); }
@@ -620,14 +677,14 @@ function tick() {
 
   // floors / xp
   if (mode === "play") {
-    const ch = CHAMBERS.find(c => pos.z <= c.start + 2 && pos.z > c.endZ + 2) || CHAMBERS[CHAMBERS.length - 1];
+    const ch = track.chambers.find(c => pos.z <= c.start + 2 && pos.z > c.endZ + 2) || track.chambers[track.chambers.length - 1];
     if ($("floor").textContent !== ch.name) $("floor").textContent = ch.name;
     if (!seen.has(ch.name)) {
       seen.add(ch.name); xp += ch.xp; $("xpfill").style.width = (xp / XPMAX * 100) + "%"; $("xpnum").textContent = xp;
-      toast("ACHIEVEMENT", `Rode into the ${ch.name.toLowerCase()} · +${ch.xp} XP`);
+      toast("ACHIEVEMENT", `Rode into ${track.hall ? "the " : ""}${ch.name.toLowerCase()} · +${ch.xp} XP`);
     }
   }
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(tick);
-window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash };   // handy for debugging
+window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J };   // handy for debugging

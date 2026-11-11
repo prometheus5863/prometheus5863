@@ -427,7 +427,7 @@ function renderQuests(){
       <h3 style="margin-top:8px">${q.t.toUpperCase()}</h3>
       <div class="skulls" title="difficulty">${"☠".repeat(q.d)}<span style="opacity:.3">${"☠".repeat(5-q.d)}</span></div>
       <p>${q.x}</p><div class="tags">${q.tags.map(t=>`<span>${t}</span>`).join("")}</div>
-      <div class="lore"><p>${q.lore}</p><p class="links"><a href="https://github.com/prometheus5863/${q.r}" target="_blank" rel="noopener">▶ REPO</a>${q.demo?`<a href="${q.demo}" target="_blank" rel="noopener">▶ DEMO</a>`:""}</p></div>
+      <div class="lore"><p>${q.lore}</p><p class="links">${q.r?`<a href="https://github.com/prometheus5863/${q.r}" target="_blank" rel="noopener">▶ REPO</a>`:""}${q.demo?`<a href="${q.demo}" target="_blank" rel="noopener">▶ DEMO</a>`:""}</p></div>
       <p style="font-size:16px;color:var(--ink2);margin:6px 0 0">click to read the lore</p>`;
     el.style.borderTop = `6px solid ${c}`;
     el.onclick = ev => { if(ev.target.closest("a")) return; el.classList.toggle("open"); blip(520); };
