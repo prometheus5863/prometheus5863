@@ -44,7 +44,7 @@ const QUESTS = [
  {r:"single-layer-graphene-structure",t:"The Thesis Dungeon",b:"ARCANA",s:"ACTIVE",d:5,tags:["Python","NumPy","Matplotlib"],
   x:"Computational study of single-layer graphene's fundamental properties.",
   lore:"Groundwork for the final boss: twisted bilayer graphene–superconductor junctions (M.Tech thesis, 2027)."},
- {r:"downtown-duel",t:"Downtown Duel",b:"FORGING",s:"ACTIVE",d:3,tags:["GDScript","Godot 4","Web"],
+ {r:"downtown-duel",shot:"shots/downtown-duel.jpg",t:"Downtown Duel",b:"FORGING",s:"ACTIVE",d:3,tags:["GDScript","Godot 4","Web"],
   x:"Open-world creature-battle demo that runs in the browser.",
   lore:"Nine connected zones on a looping road network, 61 animated monsters with simple AI, real-time lock-on combat, and armor that changes the hero's look."},
  {r:"Design-Verification-Roadmap",t:"Into the Silicon",b:"SMITHING",s:"ACTIVE",d:4,tags:["SystemVerilog","UVM","Python"],
