@@ -53,8 +53,8 @@ export function buildJourney(ctx) {
     { name: "QANT LABS", xp: 250, sky: "#05060f", amb: 1.1, sun: .2, ex: [
       { title: "QANT LABS · QUANTUMTRACE", color: "#a66fd1", lines: [
         "Freelance build for Qant Labs: QuantumTrace, a 3D WebGL walk through quantum hardware, from the outer casing down to the dilution refrigerator.",
-        "With a transport simulation: wavefunctions, transmission and potential landscapes."],
-        links: [["REPO", GH + "quantumtrace"]] },
+        "Five simulations behind it: thermal shielding, the cool-down, the real 127-qubit heavy-hex chip, gates on the Bloch sphere, and routing a CX across the chip."],
+        links: [["DEMO", "https://prometheus5863.github.io/prometheus5863/quantumtrace/"], ["REPO", GH + "quantumtrace"]] },
     ]},
   ];
   const exhibits = [];
