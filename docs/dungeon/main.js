@@ -542,7 +542,9 @@ function ready() {
   if (readyCount++) return;
   renderer.compile(scene, camera);
   $("fade").style.opacity = 0; mode = "title";
-  if (location.hash === "#ride") start();
+  const k = roomFromHash();
+  if (k && goRoom(k)) { $("hint").classList.add("on"); setTimeout(() => $("hint").classList.remove("on"), 9000); }
+  else if (location.hash === "#ride") start();
 }
 function start() {
   if (mode !== "title") return;
@@ -582,15 +584,40 @@ function showPanel(ex) {
   p.classList.add("on");
 }
 
+function setEnv(to, z) {
+  J.sun.visible = !to.hall;
+  if (to.hall) { scene.fog.color.copy(FOG_HALL); scene.fog.near = 22; scene.fog.far = 78; }
+  else { const sc = J.sections.find(c => z <= c.start && z > c.endZ) || J.sections[0]; sky.copy(sc.skyC); scene.fog.color.copy(sky); scene.fog.near = 40; scene.fog.far = 170; hemi.intensity = sc.amb; J.sun.intensity = sc.sun; }
+}
+
+/* ---------------- deep links: …/dungeon/#room=<key> drops the rider in front of that room, looking at it ----------------
+   Keys: a repo name (quantumtrace), a chamber (armory, war-room, forge, contact), a skill branch (arcana),
+   or a stop on the road (kashi, shiva-tours, aarsh, triev, silicofeller, qant-labs). */
+const slug = (x) => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const ROOMS = new Map(), ALIAS = { "shiva-tours": "shiva-tours-travels", character: "character-sheet", skills: "armory", quests: "war-room", about: "great-hall", road: "kashi" };
+CHAMBERS.forEach((ch) => { ROOMS.set(slug(ch.name), { track: HALL, z: ch.start - 5 }); ch.ex.forEach((ex) => ROOMS.set(ex.quest ? slug(ex.quest.r || ex.quest.id) : slug(ex.title.split("·")[0]), { track: HALL, ex })); });
+ROOMS.set("contact", { track: HALL, ex: endCh.end }); ROOMS.set("wardrobe", { track: HALL, ex: wardrobe });
+J.sections.forEach((sc) => { ROOMS.set(slug(sc.name), { track: ROAD, z: sc.start - 4 }); sc.ex.forEach((ex) => ROOMS.set(slug(ex.title.split("·")[0]), { track: ROAD, ex })); });
+let focus = null;
+function goRoom(key) {
+  const r = ROOMS.get(ALIAS[key] || key); if (!r) return false;
+  const z = r.z ?? r.ex.at ?? r.ex.z + 5;
+  track = r.track; pos.set(track.cx, 0, Math.max(track.zMin, Math.min(track.zMax, z))); vz = vx = 0;
+  focus = r.ex || null; lookYaw = focus ? focus.side * .5 : 0;
+  mode = "play"; $("title").classList.add("hide"); setEnv(track, pos.z);
+  chasePose(); camera.position.copy(chase); camLook.copy(look);
+  return true;
+}
+const roomFromHash = () => (location.hash.match(/room=([\w-]+)/) || [])[1];
+addEventListener("hashchange", () => { const k = roomFromHash(); if (k && mode === "play") { $("fade").style.opacity = 1; setTimeout(() => { goRoom(k); $("fade").style.opacity = 0; }, 500); } });
+
 function travel(to, z, title, msg) {
   if (mode !== "play") return;
   mode = "warp"; $("fade").style.opacity = 1; showPanel(null);
   setTimeout(() => {
     track = to; pos.set(to.cx, 0, z); vz = vx = 0; lookYaw = 0;
     chasePose(); camera.position.copy(chase); camLook.copy(look);
-    J.sun.visible = !to.hall;
-    if (to.hall) { scene.fog.color.copy(FOG_HALL); scene.fog.near = 22; scene.fog.far = 78; }
-    else { const sc = J.sections.find(c => z <= c.start && z > c.endZ) || J.sections[0]; sky.copy(sc.skyC); scene.fog.color.copy(sky); scene.fog.near = 40; scene.fog.far = 170; hemi.intensity = sc.amb; J.sun.intensity = sc.sun; }
+    setEnv(to, z);
     $("fade").style.opacity = 0; mode = "play"; toast(title, msg);
   }, 700);
 }
@@ -665,7 +692,9 @@ function tick() {
   showPanel(near);
 
   // camera
-  const want = mouseX * 0.55 + (near ? near.side * 0.22 : 0);
+  if (focus && (Math.abs(vz) > 1.5 || near !== focus)) focus = null;
+  riderTop.rotation.y += ((near ? -near.side * .7 : 0) - riderTop.rotation.y) * Math.min(1, 5 * dt);   // the rider turns to look at the exhibit
+  const want = mouseX * 0.55 + (near ? near.side * (near === focus ? .5 : .22) : 0);
   lookYaw += (want - lookYaw) * Math.min(1, 4 * dt);
   chasePose();
   if (mode === "title" || mode === "loading") { camera.position.copy(TITLE_POS); camLook.copy(TITLE_LOOK); }
@@ -688,4 +717,4 @@ function tick() {
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(tick);
-window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J };   // handy for debugging
+window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J, goRoom, rooms: () => [...ROOMS.keys()] };   // handy for debugging

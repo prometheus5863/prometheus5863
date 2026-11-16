@@ -4,26 +4,26 @@
 
 </div>
 
-<img src="assets/stats.svg" width="100%" alt="Player card: breathing pixel sprite and base stats"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=character"><img src="assets/stats.svg" width="100%" alt="Player card: breathing pixel sprite and base stats"/></a>
 
 <a href="https://prometheus5863.github.io/prometheus5863/"><img src="assets/enter.svg" width="100%" alt="Enter the castle: interactive 8-bit portfolio"/></a>
 
-<img src="assets/ribbon-main-quests.svg" width="100%" alt="Main Quests"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=war-room"><img src="assets/ribbon-main-quests.svg" width="100%" alt="Main Quests"/></a>
 
 <p align="center">
-<a href="https://github.com/prometheus5863/muse-memory"><img src="assets/quest-muse-memory.svg" width="49%" alt="muse-memory"/></a>
-<a href="https://github.com/prometheus5863/invesalius-tep-gsoc2026"><img src="assets/quest-invesalius-tep-gsoc2026.svg" width="49%" alt="invesalius-tep-gsoc2026"/></a>
-<a href="https://github.com/prometheus5863/quantumtrace"><img src="assets/quest-quantumtrace.svg" width="49%" alt="quantumtrace"/></a>
-<a href="https://github.com/prometheus5863/downtown-duel"><img src="assets/quest-downtown-duel.svg" width="49%" alt="downtown-duel"/></a>
-<a href="https://github.com/prometheus5863/single-layer-graphene-structure"><img src="assets/quest-single-layer-graphene-structure.svg" width="49%" alt="single-layer-graphene-structure"/></a>
-<a href="https://github.com/prometheus5863/Design-Verification-Roadmap"><img src="assets/quest-design-verification-roadmap.svg" width="49%" alt="Design-Verification-Roadmap"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=muse-memory"><img src="assets/quest-muse-memory.svg" width="49%" alt="muse-memory"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=invesalius-tep-gsoc2026"><img src="assets/quest-invesalius-tep-gsoc2026.svg" width="49%" alt="invesalius-tep-gsoc2026"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=quantumtrace"><img src="assets/quest-quantumtrace.svg" width="49%" alt="quantumtrace"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=downtown-duel"><img src="assets/quest-downtown-duel.svg" width="49%" alt="downtown-duel"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=single-layer-graphene-structure"><img src="assets/quest-single-layer-graphene-structure.svg" width="49%" alt="single-layer-graphene-structure"/></a>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=design-verification-roadmap"><img src="assets/quest-design-verification-roadmap.svg" width="49%" alt="Design-Verification-Roadmap"/></a>
 </p>
 
-<p align="center"><sub>⚔️ click a scroll to enter its dungeon</sub></p>
+<p align="center"><sub>⚔️ click a scroll to ride into its room in the castle · or go straight to the code: <a href="https://github.com/prometheus5863/muse-memory">muse-memory</a> · <a href="https://github.com/prometheus5863/invesalius-tep-gsoc2026">invesalius-tep</a> · <a href="https://github.com/prometheus5863/quantumtrace">quantumtrace</a> · <a href="https://github.com/prometheus5863/downtown-duel">downtown-duel</a> · <a href="https://github.com/prometheus5863/single-layer-graphene-structure">graphene</a> · <a href="https://github.com/prometheus5863/Design-Verification-Roadmap">verification-roadmap</a></sub></p>
 
-<img src="assets/ribbon-skill-tree.svg" width="100%" alt="Skill Tree"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=armory"><img src="assets/ribbon-skill-tree.svg" width="100%" alt="Skill Tree"/></a>
 
-<img src="assets/skill-tree.svg" width="100%" alt="Skill tree: Arcana (quantum), Sorcery (AI/ML), Craft (systems), Smithing (silicon) and Forging (gamedev) growing from a Physics Core"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=armory"><img src="assets/skill-tree.svg" width="100%" alt="Skill tree: Arcana (quantum), Sorcery (AI/ML), Craft (systems), Smithing (silicon) and Forging (gamedev) growing from a Physics Core"/></a>
 
 <img src="assets/ribbon-inventory.svg" width="100%" alt="Inventory"/>
 
@@ -62,7 +62,7 @@
 
 </details>
 
-<img src="assets/ribbon-now-grinding.svg" width="100%" alt="Now Grinding"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=forge"><img src="assets/ribbon-now-grinding.svg" width="100%" alt="Now Grinding"/></a>
 
 ```text
 [████████░░] thesis: graphene → TBG–superconductor junctions
@@ -78,7 +78,7 @@
   <img src="https://raw.githubusercontent.com/prometheus5863/prometheus5863/output/snake.svg" width="100%" alt="a snake devouring my contribution graph"/>
 </picture>
 
-<img src="assets/ribbon-send-a-raven.svg" width="100%" alt="Send a Raven"/>
+<a href="https://prometheus5863.github.io/prometheus5863/dungeon/#room=contact"><img src="assets/ribbon-send-a-raven.svg" width="100%" alt="Send a Raven"/></a>
 
 <p align="center">
 <a href="https://www.linkedin.com/in/harsh-vardhan-gururani-9b35862b5"><img src="https://img.shields.io/badge/LinkedIn-1b1210?style=for-the-badge&logo=linkedin&logoColor=d4a24c"/></a>
