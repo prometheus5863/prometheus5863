@@ -213,7 +213,7 @@ const lam = (o) => new THREE.MeshLambertMaterial(o);
 const box = (w, h, d, mat) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
 const zMid = (HALL0 + L_END) / 2;
 {
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, LEN), lam({ map: floorTex([W / 4, LEN / 4]) }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, LEN), new THREE.MeshPhongMaterial({ map: floorTex([W / 4, LEN / 4]), shininess: 48, specular: "#5a4630" }));   // polished stone: torches glint on it
   floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, zMid); scene.add(floor);
   const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, LEN), lam({ map: brickTex([W / 4, LEN / 4], ["#2a2420", "#332b25", "#241e1a"], "#120e0b", 3) }));
   ceil.rotation.x = Math.PI / 2; ceil.position.set(0, H, zMid); scene.add(ceil);
@@ -547,7 +547,32 @@ const wardrobeAnim = [];
   exhibits.push(wardrobe);
 }
 const J = buildJourney({ THREE, scene, tex, rng, box, lam, flame, placeBoard, C, GH, pos: () => rig.position });
-const HALL = { cx: 0, zMax: 1, zMin: L_END + 8, exhibits, chambers: CHAMBERS, hall: true };
+/* ---------------- the courtyard: ride back out of the gate (S) into the storm ---------------- */
+const COURT = { name: "COURTYARD", xp: 100, start: 32, endZ: -2, ex: [
+  { title: "THE TRAINING YARD", z: 22, side: -1, lines: BR.map((b, ci) => { const col = TREE.map(r => r[ci]), n = (k) => col.filter(c => c[2] === k).length;
+      return `${b.k} (${b.label}): ${n("u")} learned${n("g") ? `, ${n("g")} in training` : ""}${n("l") ? `, ${n("l")} locked` : ""}`; }) },
+  { title: "NOTICE AT THE GATE", z: 13, side: 1, lines: ["Inside: ten rooms in a row. Skills in the Armory, projects in the War Room, every other repo in the Vault.", "A wardrobe in the Great Hall opens onto the road from Kashi: one world per job.", "Lost? Press M for the map."] },
+] };
+{
+  for (const ex of COURT.ex) { exhibits.push(ex); placeBoard(ex, 0, false); }
+  const straw = lam({ color: "#c9a85a" }), post = lam({ color: "#4a2c18" }), red = lam({ color: "#b83232" }), white = lam({ color: "#e8dcc0" });
+  for (const [x, z] of [[-8.5, 27], [-10.5, 19], [9, 26]]) {       // training dummies
+    const d = new THREE.Group();
+    const a = box(.25, 2.4, .25, post); a.position.y = 1.2; const b = box(1.6, .22, .22, post); b.position.y = 1.9;
+    const body = box(.7, 1.0, .5, straw); body.position.y = 1.7; const head = box(.5, .5, .5, straw); head.position.y = 2.55;
+    d.add(a, b, body, head); d.position.set(x, 0, z); d.rotation.y = x < 0 ? .5 : -.5; scene.add(d);
+  }
+  const tg = new THREE.Group();                                      // archery target
+  [[1.5, white], [1.1, red], [.7, white], [.3, red]].forEach(([r, m], i) => { const c = box(r, r, .08, m); c.position.set(0, 1.6, i * .03); tg.add(c); });
+  for (const sx of [-.6, .6]) { const l = box(.14, 1.9, .14, post); l.position.set(sx, .8, -.3); l.rotation.x = .25; tg.add(l); }
+  tg.position.set(10.5, 0, 17); tg.rotation.y = -.7; scene.add(tg);
+  const rack = new THREE.Group();                                    // weapon rack
+  const bar = box(2.6, .14, .14, post); bar.position.y = 1.5; rack.add(bar);
+  for (const sx of [-1.2, 1.2]) { const l = box(.16, 1.7, .16, post); l.position.set(sx, .85, 0); rack.add(l); }
+  for (let k = 0; k < 4; k++) { const sw = box(.08, 1.3, .05, lam({ color: "#b8c0cc" })); sw.position.set(-.9 + k * .6, 1.0, .12); sw.rotation.x = -.12; rack.add(sw); }
+  rack.position.set(-9, 0, 12); rack.rotation.y = .6; scene.add(rack);
+}
+const HALL = { cx: 0, zMax: 32, zMin: L_END + 8, exhibits, chambers: [COURT, ...CHAMBERS], hall: true };
 const ROAD = { cx: J.cx, zMax: J.zMax, zMin: J.zMin, exhibits: J.exhibits, chambers: J.sections };
 let track = HALL;
 wardrobe.action = ["STEP THROUGH", () => travel(ROAD, J.zMax - 2, "THE ROAD FROM KASHI", "The wardrobe opens onto the ghats")];
@@ -560,13 +585,13 @@ let mode = "loading", vz = 0, vx = 0, mouseX = 0, lookYaw = 0, gallop = 0, enter
 const pos = rig.position; pos.set(0, 0, 34);
 const TITLE_POS = new THREE.Vector3(0, 10.5, 47), TITLE_LOOK = new THREE.Vector3(0, 10.5, 6);
 const seen = new Set(), touched = new Set(), st = { pos, hall: true, flash: 0, sawGhost: false };
-let XPMAX = [...CHAMBERS, ...J.sections].reduce((a, c) => a + c.xp, 0), vy = 0, hop = 0;
+let XPMAX = [COURT, ...CHAMBERS, ...J.sections].reduce((a, c) => a + c.xp, 0), vy = 0, hop = 0;
 function addXp(n, msg) { xp += n; $("xpfill").style.width = Math.min(100, xp / XPMAX * 100) + "%"; $("xpnum").textContent = xp; if (msg) toast("ACHIEVEMENT", `${msg} · +${n} XP`); }
 function refreshPanel() { const ex = activeEx; activeEx = null; showPanel(ex); }
 function warp(key) { if (mode === "title" || mode === "enter") { $("title").classList.add("hide"); mode = "play"; } if (mode !== "play") return; $("fade").style.opacity = 1; setTimeout(() => { goRoom(key); $("fade").style.opacity = 0; }, 450); }
 const fun = buildFun({ THREE, scene, box, lam, flame, tex, rng, C, W, rig, riderTop, exhibits, chamber: byName, toast, addXp, refreshPanel, seen, touched, state: st, PROM: window.PROM, $,
   hallRange: [0, L_END], xp: () => xp, warp,
-  mapHall: () => CHAMBERS.map(c => [slug(c.name), c.name, c.name === "WAR ROOM" ? `${QUESTS.length} quests` : c.name === "VAULT" ? `${VAULT.reduce((a, v) => a + v.items.length, 0)} more repos` : c.name === "TAVERN" ? "jukebox, sword, rumours" : ""]),
+  mapHall: () => [COURT, ...CHAMBERS].map(c => [slug(c.name), c.name, c === COURT ? "outside, in the storm" : c.name === "WAR ROOM" ? `${QUESTS.length} quests` : c.name === "VAULT" ? `${VAULT.reduce((a, v) => a + v.items.length, 0)} more repos` : c.name === "TAVERN" ? "jukebox, sword, rumours" : ""]),
   mapRoad: () => [["wardrobe", "THE WARDROBE", "the way through"], ...J.sections.map(c => [slug(c.name), c.name, ""])] });
 XPMAX += fun.bonusXp;
 const camLook = TITLE_LOOK.clone(); camera.position.copy(TITLE_POS); camera.lookAt(camLook);
@@ -647,7 +672,7 @@ function setEnv(to, z) {
    or a stop on the road (kashi, shiva-tours, aarsh, triev, silicofeller, qant-labs). */
 const slug = (x) => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const ROOMS = new Map(), ALIAS = { "shiva-tours": "shiva-tours-travels", character: "character-sheet", skills: "armory", quests: "war-room", about: "great-hall", road: "kashi" };
-CHAMBERS.forEach((ch) => { ROOMS.set(slug(ch.name), { track: HALL, z: ch.start - 5 }); ch.ex.forEach((ex) => !ex.noRoom && ROOMS.set(ex.quest ? slug(ex.quest.r || ex.quest.id) : slug(ex.title.split("·")[0]), { track: HALL, ex })); });
+[COURT, ...CHAMBERS].forEach((ch) => { ROOMS.set(slug(ch.name), { track: HALL, z: ch.start - 5 }); ch.ex.forEach((ex) => !ex.noRoom && ROOMS.set(ex.quest ? slug(ex.quest.r || ex.quest.id) : slug(ex.title.split("·")[0]), { track: HALL, ex })); });
 ROOMS.set("contact", { track: HALL, ex: endCh.end }); ROOMS.set("wardrobe", { track: HALL, ex: wardrobe });
 J.sections.forEach((sc) => { ROOMS.set(slug(sc.name), { track: ROAD, z: sc.start - 4 }); sc.ex.forEach((ex) => ROOMS.set(slug(ex.title.split("·")[0]), { track: ROAD, ex })); });
 CHAMBERS.forEach((ch) => ch.ex.forEach((ex) => ex.vault?.forEach(([r]) => ROOMS.set(slug(r), { track: HALL, ex }))));
