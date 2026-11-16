@@ -55,8 +55,15 @@ const QUESTS = [
  {r:"",id:"operation-cleanslate",shot:"shots/cleanslate.jpg",t:"Operation Cleanslate",b:"SORCERY",s:"ACTIVE",d:3,tags:["Python","Streamlit","Gemini"],
   x:"KYC risk intelligence and duplicate-detection dashboard.",
   lore:"Clusters likely-duplicate customers with tunable age, income and occupation tolerances, and surfaces PEP, sanctions and adverse-media flags. Optional Gemini-powered compliance matching."},
- {r:"triev-whatsapp-crm",t:"The Merchant's Ledger",b:"CRAFT",s:"CLEARED",d:3,tags:["JavaScript","WhatsApp","CRM"],
-  x:"WhatsApp CRM and lead-gen prototype for a 2W EV fleet.",lore:"Built as freelance work for an EV startup run by an IIT (BHU) alum."},
+ {r:"triev-whatsapp-crm",shot:"shots/triev-crm.jpg",t:"The Merchant's Ledger",b:"CRAFT",s:"CLEARED",d:3,tags:["Node.js","WhatsApp","Sheets"],
+  x:"WhatsApp bot that logs roadside-assistance tickets for EV riders.",
+  lore:"A rider sends 'help', answers five questions and gets a ticket ID back in English and Hindi. The conversation is a pure, unit-tested state machine; tickets land in a Google Sheet. Prototype built at an EV startup."},
+ {r:"form-g-aarsh",shot:"shots/form-g.jpg",t:"The Form G Watchtower",b:"CRAFT",s:"ACTIVE",d:3,tags:["Node.js","Cheerio","Actions"],
+  x:"Portal that scrapes India's insolvency board every day and tracks Form G invitations.",
+  lore:"An Express app with a scraper that classifies table cells by content rather than position, a GitHub Action that commits fresh CSVs daily, and tests around the parser. Built for an insolvency firm."},
+ {r:"aarsh-website",shot:"shots/aarsh-website.jpg",t:"The Insolvency Desk",b:"CRAFT",s:"CLEARED",d:2,tags:["JavaScript","Tailwind","Chart.js"],
+  x:"Demo site for an insolvency firm: assistant, Form G tracker, notice decoder, dashboard.",
+  lore:"The showcase build I handed over, kept running on baked-in sample answers so every screen works without a backend."},
  {r:"embedded-systems-software",t:"Rune-Carving in C",b:"SMITHING",s:"CLEARED",d:2,tags:["C","Embedded"],
   x:"Embedded C drills and exercises.",lore:"Where the silicon branch started."},
 ];
@@ -66,5 +73,37 @@ const GRIND = [
  ["muse: self-curating memory model",5,"var(--a2)"],
  ["Downtown Duel → souls-like for phones",3,"var(--a5)"],
 ];
-window.PROM = {BR, TREE, QUESTS, GRIND};
+// Every other repo gets a plaque in the Vault. [repo, what it is]
+const VAULT = [
+ {title:"CLIENT WORK", items:[
+  ["ibbi-webscrapper-","Python scraper for IBBI NCLT orders, with PDF detail extraction"],
+  ["triev-rsa-backend","Socket.io + MongoDB backend for roadside-assistance tickets"],
+  ["shiv-tour-and-travels","Site for a hill-tourism operator"],
+  ["aarsh-website-automated","Earlier automated build of the insolvency demo site"]]},
+ {title:"PHYSICS AND SILICON", items:[
+  ["silico.fella-","QubitPro: a small state-vector simulator with noise models and gate tests"],
+  ["c1m2-gururani","Embedded C course build system: makefiles, cross-compilation"],
+  ["design-verification-projects","Verification projects, to go with the roadmap"]]},
+ {title:"AI AND DATA", items:[
+  ["amlc-er","Amazon ML Challenge 2026: business entity resolution, scored on macro F0.5"],
+  ["work-for-afterquery","Two small code-repair tasks: a C linker fix and a Python sort"]]},
+ {title:"EXPERIMENTS", items:[
+  ["mbti-bot-world","Personality-type chat bots and a question bank, static site"],
+  ["mbti-","Seed of the next MBTI project"]]},
+];
+// Scribe's office: the resume, in three boards.
+const RESUME = [
+ {title:"SCHOOLING", kv:[["DEGREE","B.Tech + M.Tech, Engineering Physics"],["KEEP","IIT (BHU) Varanasi, 2022 to 2027"],["THESIS","Transport in graphene–superconductor junctions"],["GUILD","Co-founder, Quantum Vertical, Club of Programmers"]]},
+ {title:"CAMPAIGNS", kv:[["2026","Open source: PR #1265 merged into InVesalius"],["2025-26","TriEV: data science and automation"],["2025-26","Freelance: Qant Labs, an insolvency firm, a tour operator"],["EARLIER","Silicofeller: quantum research intern, QuantumOS founding member"]]},
+ {title:"PROFICIENCIES", kv:[["TONGUES","Python, C, JavaScript, GDScript, SystemVerilog (learning)"],["PHYSICS","NumPy, SciPy, QuTiP, quantum transport"],["AI / DATA","PyTorch, MNE, FastAPI, NetworkX, SQLite"],["BUILDING","three.js, React, Node, Godot 4, GitHub Actions"]]},
+];
+// Gear for the character build: one piece per skill branch.
+const GEAR = [
+ {k:"ARCANA",  id:"staff",   name:"Staff of Superposition", perk:"Carries a qubit that is and isn't lit."},
+ {k:"SORCERY", id:"cloak",   name:"Cloak of Embeddings",    perk:"Remembers every room it has been in."},
+ {k:"CRAFT",   id:"shield",  name:"Shield of Uptime",       perk:"Blocks 403s. Mostly."},
+ {k:"SMITHING",id:"helm",    name:"Helm of the Testbench",  perk:"Asserts before it trusts."},
+ {k:"FORGING", id:"barding", name:"Gilded Barding",         perk:"The horse insisted."},
+];
+window.PROM = {BR, TREE, QUESTS, GRIND, VAULT, RESUME, GEAR};
 })();

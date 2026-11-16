@@ -35,13 +35,13 @@ export function buildJourney(ctx) {
       { title: "AARSH · THE COUNTING HOUSE", color: "#6f9a3a", lines: [
         "Freelance work for AARSH, an insolvency firm.",
         "Built the firm's website, plus automation around its filings: an IBBI data scraper and a Form G tool."],
-        links: [["WEBSITE REPO", GH + "aarsh-website"], ["SCRAPER", GH + "ibbi-webscrapper-"]] },
+        links: [["WEBSITE REPO", GH + "aarsh-website"], ["FORM G PORTAL", GH + "form-g-aarsh"], ["SCRAPER", GH + "ibbi-webscrapper-"]] },
     ]},
     { name: "EV DEPOT", xp: 200, sky: "#141d33", amb: 1.25, sun: .35, ex: [
       { title: "TRIEV · THE EV DEPOT", color: "#6f9a3a", lines: [
         "Work for TriEV, a two-wheeler EV fleet for gig riders in NCR.",
         "Replaced a manual Sheets process for rider incentives with n8n automation.",
-        "Ran a WhatsApp referral campaign to about 5,000 riders and built a WhatsApp-native CRM with trigger words.",
+        "Ran a WhatsApp referral campaign to about 5,000 riders and prototyped a WhatsApp bot that logs roadside-assistance tickets.",
         "QR-tagged repair parts as groundwork for inventory forecasting."],
         links: [["CRM REPO", GH + "triev-whatsapp-crm"]] },
     ]},
@@ -245,6 +245,8 @@ export function buildJourney(ctx) {
     const s = SECTIONS[2], z0 = s.start;
     ground(2, (rep) => tex(32, 32, (g) => { g.fillStyle = "#d8cfae"; g.fillRect(0, 0, 32, 32); g.fillStyle = "#2f5a4a"; g.fillRect(0, 0, 16, 16); g.fillRect(16, 16, 16, 16); g.fillStyle = "#00000022"; g.fillRect(0, 0, 32, 1); g.fillRect(0, 16, 32, 1); }, rep), -80, 80, 4);
     road(2, "#7a2a2a", "#d4a24c");
+    billboard("shots/aarsh-website.jpg", 10.5, z0 - 11, -.75, 7.5);
+    billboard("shots/form-g.jpg", -10.5, z0 - 29, .75, 7.5);
     // the adding machine
     const mx = 12.5, mz = z0 - 30, body = lam({ color: "#2f4a3a" }), brass = phong({ color: "#c79a3a", shininess: 110, specular: "#fff3c4" }), cream = lam({ color: "#ecd9a8" });
     at(box(7, 4.2, 9, body), mx, 2.1, mz); at(box(7.4, .5, 9.4, brass), mx, .25, mz); at(box(5, 1.4, 7, body), mx + .6, 4.9, mz);
@@ -298,6 +300,7 @@ export function buildJourney(ctx) {
     }
     // one doing laps on the service road
     const lap = scooter("#6f9a3a"); anim.push((t) => { const u = (t * .12) % 1, f = u < .5 ? u * 2 : 2 - u * 2; lap.position.set(CX - 12, 0, z0 - 4 - f * (SEC - 8)); lap.rotation.y = u < .5 ? 0 : Math.PI; for (const w of lap.userData.wheels) w.rotation.x = t * 9; });
+    billboard("shots/triev-crm.jpg", 10.5, z0 - 38, -.75, 7.5);
     // phone kiosk with chat bubbles drifting up (the WhatsApp CRM)
     const kz = z0 - 33; at(box(1.8, 3.2, .3, dark), -8.5, 1.9, kz).rotation.y = .7;
     const scr = plane(1.5, 2.8, basic({ map: tex(48, 90, (g) => { g.fillStyle = "#0e1a14"; g.fillRect(0, 0, 48, 90); for (let y = 6, k = 0; y < 84; y += 13, k++) { g.fillStyle = k % 2 ? "#5dff8a" : "#e9efe9"; g.fillRect(k % 2 ? 14 : 4, y, 30, 9); } }) })); scr.rotation.y = .7; at(scr, -8.5 + .11, 1.9, kz + .13);

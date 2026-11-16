@@ -1,7 +1,8 @@
 import * as THREE from "../vendor/three.min.js";
 import { buildJourney } from "./journey.js";
+import { buildFun } from "./fun.js";
 
-const { BR, TREE, QUESTS, GRIND } = window.PROM;
+const { BR, TREE, QUESTS, GRIND, VAULT, RESUME } = window.PROM;
 const GH = "https://github.com/prometheus5863/";
 const $ = id => document.getElementById(id);
 
@@ -33,6 +34,7 @@ const CHAMBERS = [
         "V. Got PR #1265 merged into InVesalius, an open-source neuronavigation suite.",
         "NOW. Thesis on graphene-superconductor junctions, forging a path into silicon verification."] },
   ]},
+  { name: "SCRIBE'S OFFICE", xp: 100, ex: RESUME.map(r => ({ title: r.title, kv: r.kv, lines: r.kv.map(([k, v]) => `${k}: ${v}`) })) },
   { name: "ARMORY", xp: 200, ex: BR.map((b, ci) => ({
       title: `${b.k} · ${b.label.toUpperCase()}`, color: b.hex,
       runes: TREE.map(row => row[ci]),
@@ -43,6 +45,20 @@ const CHAMBERS = [
       lines: [q.x, q.lore],
       links: [...(q.r ? [["REPO", GH + q.r]] : []), ...(q.demo ? [[q.demo.includes("itch.io") ? "PLAY" : "DEMO", q.demo]] : [])],
   }))},
+  { name: "GALLERY", xp: 150, ex: [
+      ["quantumtrace", "shots/quantumtrace-2.jpg", "Deeper in the stack: one of the five simulations you can poke at."],
+      ["aarsh-website", "shots/aarsh-assistant.jpg", "The assistant screen, answering from baked-in sample replies."],
+      ["aarsh-website", "shots/aarsh-tracker.jpg", "The Form G tracker: look up an invitation by company."],
+      ["form-g-aarsh", "shots/form-g-2.jpg", "The assignments view of the Form G portal."],
+      ["triev-whatsapp-crm", "shots/triev-crm.jpg", "A whole ticket conversation, generated from the real handler in dry-run."],
+    ].map(([r, shot, line], i) => { const q = QUESTS.find(x => x.r === r); return { title: `${q.t.toUpperCase()} · PLATE ${["I", "II", "III", "IV", "V"][i]}`, shot, noRoom: true, color: BR.find(b => b.k === q.b).hex,
+      lines: [line, q.x], links: [["REPO", GH + r], ...(q.demo ? [["DEMO", q.demo]] : [])] }; }) },
+  { name: "VAULT", xp: 150, ex: VAULT.map(v => ({ title: `${v.title} · VAULT`, small: true, vault: v.items,
+      lines: v.items.map(([r, d]) => `${r}: ${d}`), links: v.items.map(([r]) => [r.toUpperCase(), GH + r]) })) },
+  { name: "TAVERN", xp: 150, ex: [
+    { title: "HOUSE RULES", lines: ["1. No merging on Fridays.", "2. The horse does not review pull requests.", "3. Whoever draws the sword from the stone keeps it.", "4. Coins found in the halls are yours. Count them.", "5. Press M for the map, C for your build."] },
+    { title: "RUMOURS", lines: ["They say a box in the armory holds a cat. Or doesn't.", "They say a rider with no head crosses the dungeon when the lightning hits.", "They say an old cheat code still works on the horse."] },
+  ]},
   { name: "FORGE", xp: 150, ex: [
     { title: "ON THE ANVIL", grind: GRIND, lines: GRIND.map(g => `${g[0]}: ${g[1] * 10}%`) },
   ]},
@@ -115,7 +131,8 @@ function boardTex(ex) {
     g.font = "22px PS2P"; g.fillStyle = C.crim; y = wrap(g, ex.title, 44, y, w - 88, 32) + 10;
     g.fillStyle = C.ink2; g.fillRect(44, y, w - 88, 3); y += 18;
     if (ex.kv) {
-      for (const [k, v] of ex.kv) { g.font = "13px PS2P"; g.fillStyle = C.ink2; g.fillText(k, 44, y + 6); g.font = "34px VT"; g.fillStyle = C.ink; g.fillText(v, 220, y - 4); y += 46; }
+      for (const [k, v] of ex.kv) { g.font = "13px PS2P"; g.fillStyle = C.ink2; g.fillText(k, 44, y + 6); g.font = "34px VT"; g.fillStyle = C.ink;
+        if (g.measureText(v).width <= w - 264) { g.fillText(v, 220, y - 4); y += 46; } else { g.font = "26px VT"; y = wrap(g, v, 220, y - 2, w - 264, 24) + 16; } }
     } else if (ex.runes) {
       for (const [ico, name, st] of ex.runes) {
         g.fillStyle = "#1b1512"; g.fillRect(44, y, w - 88, 58);
@@ -134,9 +151,9 @@ function boardTex(ex) {
         y += 36;
       }
     } else {
-      g.font = "32px VT"; g.fillStyle = C.ink;
+      const fs = ex.small ? 25 : 32; g.font = fs + "px VT"; g.fillStyle = C.ink;
       const lines = ex.quest ? [ex.quest.x] : ex.lines;
-      for (const l of lines) y = wrap(g, l, 44, y, w - 88, 32) + 10;
+      for (const l of lines) y = wrap(g, l, 44, y, w - 88, fs) + (ex.small ? 8 : 10);
       if (ex.quest) {
         let x = 44; g.font = "26px VT";
         for (const t of ex.quest.tags) { const tw = g.measureText(t).width + 20; g.fillStyle = C.parch2; g.fillRect(x, h - 96, tw, 32); g.fillStyle = "#a88a55"; g.fillRect(x, h - 66, tw, 3); g.fillStyle = C.ink; g.fillText(t, x + 10, h - 94); x += tw + 10; }
@@ -180,6 +197,7 @@ for (const ch of CHAMBERS) {
   cursor -= ch.end ? 26 : ch.ex.length * GAP + 18;
   ch.endZ = cursor;
 }
+const byName = (n) => CHAMBERS.find(c => c.name === n);
 const L_END = cursor;                      // z of the end wall
 const HALL0 = 5;                           // z of the front wall
 const LEN = HALL0 - L_END;
@@ -248,6 +266,7 @@ CHAMBERS.forEach((ch, i) => {
 function placeBoard(ex, cx = 0, wallTorch = true) {
   const g = new THREE.Group();
   const face = new THREE.MeshBasicMaterial({ map: boardTex(ex) });
+  if (ex.shot) new THREE.TextureLoader().load(ex.shot, (t) => { t.colorSpace = THREE.SRGBColorSpace; face.map = t; face.needsUpdate = true; });
   const b = new THREE.Mesh(new THREE.BoxGeometry(6.6, 4.33, .18), [wood, wood, wood, wood, face, wood]); b.position.y = 3.7; g.add(b);
   for (const x of [-2.9, 2.9]) { const p = box(.22, 1.6, .22, wood); p.position.set(x, .8, 0); g.add(p); }
   g.position.set(cx + ex.side * 6.3, 0, ex.z); g.rotation.y = -ex.side * 0.8; scene.add(g);
@@ -345,7 +364,7 @@ const endCh = CHAMBERS[CHAMBERS.length - 1];
 }
 // forge decor: anvil + coals
 {
-  const z = CHAMBERS[4].start - 16;
+  const z = byName("FORGE").start - 16;
   const a = new THREE.Group();
   const base = box(1.2, 1, 1.2, wood); base.position.y = .5;
   const body = box(.8, .5, 1.6, iron); body.position.y = 1.25;
@@ -361,7 +380,7 @@ const endCh = CHAMBERS[CHAMBERS.length - 1];
     const cols = ["#8b1e1e", "#35507d", "#4a6b2a", "#8a6424", "#5a3a6a", "#d6bd85"];
     for (let y = 2; y < 64; y += 16) { let x = 2; while (x < 60) { const bw = 3 + Math.floor(r() * 4); g.fillStyle = cols[Math.floor(r() * 6)]; g.fillRect(x, y + Math.floor(r() * 3), bw, 13); x += bw + 1; } g.fillStyle = "#24160c"; g.fillRect(0, y + 13, 64, 3); }
   });
-  const lib = CHAMBERS[1];
+  const lib = byName("LIBRARY");
   for (const s of [-1, 1]) for (let k = 0; k < 3; k++) {
     const m = box(.8, 6, 4.2, [0, 1, 2, 3, 4, 5].map(i => i === (s < 0 ? 0 : 1) ? lam({ map: shelfTex() }) : wood));
     m.position.set(s * (W / 2 - .4), 3, lib.start - 6 - k * 6.2 - (s > 0 ? 3 : 0)); scene.add(m);
@@ -534,7 +553,16 @@ const keys = {};
 let mode = "loading", vz = 0, vx = 0, mouseX = 0, lookYaw = 0, gallop = 0, enterT = 0, xp = 0, activeEx = null;
 const pos = rig.position; pos.set(0, 0, 34);
 const TITLE_POS = new THREE.Vector3(0, 10.5, 47), TITLE_LOOK = new THREE.Vector3(0, 10.5, 6);
-const seen = new Set(), XPMAX = [...CHAMBERS, ...J.sections].reduce((a, c) => a + c.xp, 0);
+const seen = new Set(), touched = new Set(), st = { pos, hall: true, flash: 0, sawGhost: false };
+let XPMAX = [...CHAMBERS, ...J.sections].reduce((a, c) => a + c.xp, 0), vy = 0, hop = 0;
+function addXp(n, msg) { xp += n; $("xpfill").style.width = Math.min(100, xp / XPMAX * 100) + "%"; $("xpnum").textContent = xp; if (msg) toast("ACHIEVEMENT", `${msg} · +${n} XP`); }
+function refreshPanel() { const ex = activeEx; activeEx = null; showPanel(ex); }
+function warp(key) { if (mode === "title" || mode === "enter") { $("title").classList.add("hide"); mode = "play"; } if (mode !== "play") return; $("fade").style.opacity = 1; setTimeout(() => { goRoom(key); $("fade").style.opacity = 0; }, 450); }
+const fun = buildFun({ THREE, scene, box, lam, flame, tex, rng, C, W, rig, riderTop, exhibits, chamber: byName, toast, addXp, refreshPanel, seen, touched, state: st, PROM: window.PROM, $,
+  hallRange: [0, L_END], xp: () => xp, warp,
+  mapHall: () => CHAMBERS.map(c => [slug(c.name), c.name, c.name === "WAR ROOM" ? `${QUESTS.length} quests` : c.name === "VAULT" ? `${VAULT.reduce((a, v) => a + v.items.length, 0)} more repos` : c.name === "TAVERN" ? "jukebox, sword, rumours" : ""]),
+  mapRoad: () => [["wardrobe", "THE WARDROBE", "the way through"], ...J.sections.map(c => [slug(c.name), c.name, ""])] });
+XPMAX += fun.bonusXp;
 const camLook = TITLE_LOOK.clone(); camera.position.copy(TITLE_POS); camera.lookAt(camLook);
 
 let readyCount = 0;
@@ -554,8 +582,10 @@ $("title").addEventListener("click", start);
 addEventListener("keydown", e => {
   if (mode === "title") { start(); return; }
   const k = e.key.toLowerCase();
+  if (mode === "play") fun.onKey(k);
+  if (k === " " && mode === "play" && hop === 0) { vy = 6.5; fun.blip([330, 494], .05, .02); }
   keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = true;
-  if (k === "e" && mode === "play") { if (activeEx?.action) activeEx.action[1](); else if (activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener"); }
+  if (k === "e" && mode === "play" && !fun.isOpen()) { if (activeEx?.action) activeEx.action[1](); else if (activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener"); }
   if (["arrowup", "arrowdown", " "].includes(k)) e.preventDefault();
 });
 addEventListener("keyup", e => { const k = e.key.toLowerCase(); keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = false; });
@@ -577,6 +607,7 @@ function showPanel(ex) {
   if (ex === activeEx) return; activeEx = ex;
   const p = $("panel");
   if (!ex) { p.classList.remove("on"); return; }
+  touched.add(ex);
   p.innerHTML = `<h3>${esc(ex.title)}</h3>` + ex.lines.map(l => `<p>${esc(l)}</p>`).join("") +
     (ex.links ? `<div class="links">${ex.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">▶ ${n}</a>`).join("")}<span class="k">E</span></div>` : "") +
     (ex.action ? `<div class="links"><a href="#" id="act">▶ ${ex.action[0]}</a><span class="k">E</span></div>` : "");
@@ -595,20 +626,24 @@ function setEnv(to, z) {
    or a stop on the road (kashi, shiva-tours, aarsh, triev, silicofeller, qant-labs). */
 const slug = (x) => x.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const ROOMS = new Map(), ALIAS = { "shiva-tours": "shiva-tours-travels", character: "character-sheet", skills: "armory", quests: "war-room", about: "great-hall", road: "kashi" };
-CHAMBERS.forEach((ch) => { ROOMS.set(slug(ch.name), { track: HALL, z: ch.start - 5 }); ch.ex.forEach((ex) => ROOMS.set(ex.quest ? slug(ex.quest.r || ex.quest.id) : slug(ex.title.split("·")[0]), { track: HALL, ex })); });
+CHAMBERS.forEach((ch) => { ROOMS.set(slug(ch.name), { track: HALL, z: ch.start - 5 }); ch.ex.forEach((ex) => !ex.noRoom && ROOMS.set(ex.quest ? slug(ex.quest.r || ex.quest.id) : slug(ex.title.split("·")[0]), { track: HALL, ex })); });
 ROOMS.set("contact", { track: HALL, ex: endCh.end }); ROOMS.set("wardrobe", { track: HALL, ex: wardrobe });
 J.sections.forEach((sc) => { ROOMS.set(slug(sc.name), { track: ROAD, z: sc.start - 4 }); sc.ex.forEach((ex) => ROOMS.set(slug(ex.title.split("·")[0]), { track: ROAD, ex })); });
+CHAMBERS.forEach((ch) => ch.ex.forEach((ex) => ex.vault?.forEach(([r]) => ROOMS.set(slug(r), { track: HALL, ex }))));
+for (const k in fun.props) ROOMS.set(k, { track: HALL, ex: fun.props[k] });
+Object.assign(ALIAS, { resume: "scribe-s-office", cv: "scribe-s-office", build: "character-sheet", gear: "character-sheet", repos: "vault", music: "jukebox" });
 let focus = null;
 function goRoom(key) {
-  const r = ROOMS.get(ALIAS[key] || key); if (!r) return false;
+  key = slug(key); const r = ROOMS.get(ALIAS[key] || key); if (!r) return false;
   const z = r.z ?? r.ex.at ?? r.ex.z + 5;
   track = r.track; pos.set(track.cx, 0, Math.max(track.zMin, Math.min(track.zMax, z))); vz = vx = 0;
   focus = r.ex || null; lookYaw = focus ? focus.side * .5 : 0;
   mode = "play"; $("title").classList.add("hide"); setEnv(track, pos.z);
   chasePose(); camera.position.copy(chase); camLook.copy(look);
+  fun.closeAll(); if (["character", "build", "gear"].includes(key)) fun.open("build");
   return true;
 }
-const roomFromHash = () => (location.hash.match(/room=([\w-]+)/) || [])[1];
+const roomFromHash = () => (location.hash.match(/room=([\w.-]+)/) || [])[1];
 addEventListener("hashchange", () => { const k = roomFromHash(); if (k && mode === "play") { $("fade").style.opacity = 1; setTimeout(() => { goRoom(k); $("fade").style.opacity = 0; }, 500); } });
 
 function travel(to, z, title, msg) {
@@ -640,6 +675,7 @@ function tick() {
     vz += az * 34 * dt; vz -= vz * Math.min(1, (az ? 1.6 : 3.2) * dt); vz = Math.max(-15, Math.min(8, vz));
     vx += ax * 30 * dt; vx -= vx * Math.min(1, 6 * dt);
     pos.z += vz * dt; pos.x += vx * dt;
+    if (vy || hop > 0) { vy -= 20 * dt; hop += vy * dt; if (hop <= 0) { hop = 0; vy = 0; } }
     if (pos.x > track.cx + LANE) { pos.x = track.cx + LANE; vx = 0; } if (pos.x < track.cx - LANE) { pos.x = track.cx - LANE; vx = 0; }
     if (pos.z > track.zMax) { pos.z = track.zMax; vz = 0; } if (pos.z < track.zMin) { pos.z = track.zMin; vz = 0; }
   }
@@ -649,7 +685,7 @@ function tick() {
   gallop += dt * (3 + sp * .75) * (amt > .02 ? 1 : 0);
   for (const [p, ph] of legs) p.rotation.x = Math.sin(gallop + ph) * .75 * amt;
   const horse = rig.userData.horse;
-  horse.position.y = Math.abs(Math.sin(gallop)) * .16 * amt;
+  horse.position.y = Math.abs(Math.sin(gallop)) * .16 * amt + hop;
   horse.rotation.y = -vx * .05; horse.rotation.z = -vx * .012;
   rig.userData.head.rotation.x = .25 + Math.sin(gallop * 2) * .08 * amt + Math.sin(t * 1.3) * .03;
   rig.userData.tail.rotation.z = Math.sin(t * 3) * .25;
@@ -669,6 +705,7 @@ function tick() {
     J.sun.intensity += (sec.sun - J.sun.intensity) * Math.min(1, 2 * dt);
   } else sky.lerpColors(SKY0, SKY1, flash * .85);
   J.update(t, dt); for (const f of wardrobeAnim) f(t, dt);
+  st.hall = !onRoad; st.flash = flash; fun.update(t, dt, st);
   for (const m of outMats) m.color.copy(m.userData.base).multiplyScalar(.72 + flash * .28);
   castleMat.color.setScalar(.84 + flash * .16);
   bolt.visible = outside && flash > .5;
@@ -710,11 +747,10 @@ function tick() {
     const ch = track.chambers.find(c => pos.z <= c.start + 2 && pos.z > c.endZ + 2) || track.chambers[track.chambers.length - 1];
     if ($("floor").textContent !== ch.name) $("floor").textContent = ch.name;
     if (!seen.has(ch.name)) {
-      seen.add(ch.name); xp += ch.xp; $("xpfill").style.width = (xp / XPMAX * 100) + "%"; $("xpnum").textContent = xp;
-      toast("ACHIEVEMENT", `Rode into ${track.hall ? "the " : ""}${ch.name.toLowerCase()} · +${ch.xp} XP`);
+      seen.add(ch.name); addXp(ch.xp, `Rode into ${track.hall ? "the " : ""}${ch.name.toLowerCase()}`);
     }
   }
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(tick);
-window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J, goRoom, rooms: () => [...ROOMS.keys()] };   // handy for debugging
+window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J, goRoom, rooms: () => [...ROOMS.keys()], fun, seen, st, CHAMBERS };   // handy for debugging

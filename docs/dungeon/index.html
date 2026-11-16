@@ -27,6 +27,8 @@ button{font:inherit;cursor:pointer}
 .hbtn{margin-left:auto;background:var(--crim);color:var(--parch);border:0;padding:8px 10px;font-family:PS2P;font-size:9px;
   box-shadow:0 0 0 2px var(--goldd);text-decoration:none}
 .hbtn+.hbtn{margin-left:0}
+.hbtn{margin-left:0}
+#xpwrap{margin-right:auto}
 .hbtn:hover{background:var(--crim2)}
 
 #title{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
@@ -63,6 +65,29 @@ button{font:inherit;cursor:pointer}
 #fade{position:fixed;inset:0;background:#000;z-index:9;pointer-events:none;opacity:1;transition:opacity .6s}
 #err{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:#120d1f}
 @media (max-width:700px){#xpwrap{display:none}#floor{min-width:0}.hbtn{font-size:8px;padding:7px}}
+
+#coins{font-family:PS2P;font-size:10px;color:var(--gold2);margin-left:auto;white-space:nowrap}
+#coins+.hbtn{margin-left:0}
+.ov{position:fixed;inset:0;z-index:8;display:none;align-items:center;justify-content:center;background:rgba(8,5,12,.72);padding:12px;touch-action:auto}
+.ov.on{display:flex}
+.ovin{position:relative;width:min(880px,100%);max-height:calc(100vh - 24px);overflow:auto;background:var(--parch);color:var(--ink);padding:18px 20px;
+  box-shadow:0 0 0 4px var(--gold),0 0 0 8px var(--goldd),10px 14px 0 4px rgba(0,0,0,.5);touch-action:pan-y}
+.ovin h2{font-size:13px;color:var(--crim);margin:0 0 14px}
+.ovx{position:absolute;right:10px;top:10px;background:var(--crim);color:var(--parch);border:0;padding:6px 8px;font-size:10px}
+#mapbody{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mcol h4{font-size:9px;color:var(--ink2);margin:0 0 8px}
+.mbtn{display:block;width:100%;text-align:left;background:#1b1512;color:var(--parch);border:0;border-left:6px solid var(--goldd);padding:8px 10px;margin-bottom:6px}
+.mbtn span{font-size:9px}.mbtn small{display:block;font-size:17px;color:#a8957a}
+.mbtn.seen{border-left-color:#6f9a3a}.mbtn:hover{background:#2a2420}
+.bhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;border-bottom:3px solid var(--ink2);padding-bottom:8px;margin-bottom:8px}
+.bhead b{font-size:14px;color:var(--crim)}.bxp{font-size:8px;color:var(--ink2);text-align:right;line-height:1.8}
+.brow{display:grid;grid-template-columns:120px 1fr 96px;gap:12px;align-items:center;padding:8px 0;border-bottom:2px dashed #c9b480}
+.bname{font-size:10px;color:var(--c);text-shadow:1px 1px 0 #0003}.bname small{display:block;font-family:VT;font-size:20px;color:var(--ink2);text-shadow:none}
+.bbar{display:flex;gap:4px;margin-bottom:4px}.bbar i{width:22px;height:10px;background:#c9b480}.bbar i.u{background:var(--c)}.bbar i.g{background:repeating-linear-gradient(90deg,var(--c) 0 4px,#c9b480 4px 8px)}
+.bperk{font-size:18px;line-height:1.1}.bperk em{color:var(--ink2)}.bgear{font-size:18px;color:var(--ink2);margin-top:2px}.bgear b{color:var(--ink)}
+.bbtn{background:#1b1512;color:var(--parch);border:0;padding:9px 4px;font-size:8px;box-shadow:0 0 0 2px var(--goldd)}
+.bbtn.on{background:#2f6b2f}.bbtn:disabled{opacity:.45;cursor:default}
+@media (max-width:700px){#mapbody{grid-template-columns:1fr}.brow{grid-template-columns:1fr 84px}.bname{grid-column:1/3}#pix,#coins{display:none}#floor{margin-right:auto}}
 </style>
 </head>
 <body>
@@ -71,6 +96,9 @@ button{font:inherit;cursor:pointer}
 <div id="hud">
   <div id="floor">THE GATE</div>
   <div id="xpwrap"><span>XP</span><div id="xpbar"><div id="xpfill"></div></div><span id="xpnum">0</span></div>
+  <span id="coins" title="coins found">◎ 0/0</span>
+  <button class="hbtn" id="bmap" title="map and quick travel (M)">MAP</button>
+  <button class="hbtn" id="bbuild" title="character build (C)">BUILD</button>
   <button class="hbtn" id="pix" title="toggle chunky pixels">PIXELS: ON</button>
   <a class="hbtn" href="../" title="scrolling 2D version">2D VERSION</a>
 </div>
@@ -81,13 +109,15 @@ button{font:inherit;cursor:pointer}
   <div class="go">▶ CLICK OR PRESS ANY KEY TO RIDE IN</div>
 </div>
 
-<div id="hint"><span class="k">W</span> <span class="k">S</span> or scroll to ride · <span class="k">A</span> <span class="k">D</span> to steer · mouse to look · <span class="k">E</span> opens a link</div>
+<div id="hint"><span class="k">W</span> <span class="k">S</span> or scroll to ride · <span class="k">A</span> <span class="k">D</span> to steer · mouse to look · <span class="k">E</span> interact · <span class="k">M</span> map · <span class="k">C</span> build · <span class="k">SPACE</span> hop</div>
 <div id="panel"></div>
 <div id="toasts"></div>
 <div id="pad">
   <button data-k="a">◀</button><button data-k="w">▲</button><button data-k="d">▶</button>
   <span></span><button data-k="s">▼</button><span></span>
 </div>
+<div id="map" class="ov"><div class="ovin"><button class="ovx px">✕</button><h2 class="px">MAP · QUICK TRAVEL</h2><div id="mapbody"></div></div></div>
+<div id="build" class="ov"><div class="ovin"><button class="ovx px">✕</button><h2 class="px">CHARACTER BUILD</h2><div id="buildbody"></div></div></div>
 <div id="fade"></div>
 <div id="err"><div><p class="px" style="color:var(--gold2)">THE GATE IS SEALED</p><p>This browser can't run the 3D castle.</p><p><a class="hbtn" href="../">TAKE THE STAIRS (2D)</a></p></div></div>
 
