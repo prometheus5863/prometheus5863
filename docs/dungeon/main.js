@@ -170,7 +170,9 @@ try { renderer = new THREE.WebGLRenderer({ canvas: $("gl"), antialias: false, po
 catch (e) { $("err").style.display = "flex"; $("fade").style.opacity = 0; throw e; }
 await Promise.all([document.fonts.load("16px PS2P"), document.fonts.load("16px VT")]).catch(() => {});
 
-let pixels = true;
+const TOUCH = matchMedia("(pointer:coarse)").matches;
+if (TOUCH) document.body.classList.add("touch");
+let pixels = true, qScale = 1;        // qScale drops if the device can't hold a playable frame rate
 try { pixels = localStorage.getItem("prom-pixels") !== "off"; } catch (e) {}
 const scene = new THREE.Scene();
 const SKY0 = new THREE.Color("#141022"), SKY1 = new THREE.Color("#8d8fc4"), sky = SKY0.clone();
@@ -178,9 +180,13 @@ scene.background = sky;
 scene.fog = new THREE.Fog("#0b0806", 22, 78);
 const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 400);
 function resize() {
-  const s = pixels ? Math.max(0.34, Math.min(0.5, 520 / innerHeight)) : Math.min(devicePixelRatio, 1.5);
-  renderer.setPixelRatio(1); renderer.setSize(Math.round(innerWidth * s), Math.round(innerHeight * s), false);
-  camera.aspect = innerWidth / innerHeight; camera.fov = camera.aspect < 0.8 ? 68 : 52; camera.updateProjectionMatrix();
+  const s = (pixels ? Math.max(0.34, Math.min(0.5, 520 / Math.max(innerHeight, innerWidth * .6))) : Math.min(devicePixelRatio, TOUCH ? 1 : 1.5)) * qScale;
+  const w = Math.round(innerWidth * s), h = Math.round(innerHeight * s), portrait = innerWidth / innerHeight < 0.8;
+  renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+  camera.aspect = innerWidth / innerHeight; camera.fov = portrait ? 68 : 52;
+  // on a phone the info panel covers the lower part of the screen, so slide the picture up to keep the rider in view
+  if (TOUCH) camera.setViewOffset(w, h, 0, Math.round(h * (portrait ? .2 : .12)), w, h); else camera.clearViewOffset();
+  camera.updateProjectionMatrix();
   $("pix").textContent = "PIXELS: " + (pixels ? "ON" : "OFF");
 }
 addEventListener("resize", resize); resize();
@@ -438,7 +444,7 @@ const castleMat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: .0
   scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: "#f4ecd8", size: 2, sizeAttenuation: false, fog: false })));
 }
 // rain
-const RAIN = 700, rainPos = new Float32Array(RAIN * 6), rainGeo = new THREE.BufferGeometry();
+const RAIN = TOUCH ? 300 : 700, rainPos = new Float32Array(RAIN * 6), rainGeo = new THREE.BufferGeometry();
 {
   const r = rng(55);
   for (let i = 0; i < RAIN; i++) { const x = (r() - .5) * 90, y = r() * 44, z = 7 + r() * 46; rainPos.set([x, y, z, x + .25, y - 1.5, z], i * 6); }
@@ -464,7 +470,7 @@ for (const ch of CHAMBERS) for (const sd of [-1, 1]) {
   const wn = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 3.4), winMat); wn.rotation.y = -sd * Math.PI / 2; wn.position.set(sd * (W / 2 - .27), 6.6, ch.start - 5.2); scene.add(wn);
 }
 // dust motes drifting in the torchlight
-const MOTES = 700, motePos = new Float32Array(MOTES * 3), moteGeo = new THREE.BufferGeometry();
+const MOTES = TOUCH ? 250 : 700, motePos = new Float32Array(MOTES * 3), moteGeo = new THREE.BufferGeometry();
 {
   const r = rng(202);
   for (let i = 0; i < MOTES; i++) motePos.set([(r() - .5) * (W - 2), .5 + r() * (H - 1.5), HALL0 - 2 - r() * (LEN - 4)], i * 3);
@@ -583,16 +589,30 @@ addEventListener("keydown", e => {
   if (mode === "title") { start(); return; }
   const k = e.key.toLowerCase();
   if (mode === "play") fun.onKey(k);
-  if (k === " " && mode === "play" && hop === 0) { vy = 6.5; fun.blip([330, 494], .05, .02); }
+  if (k === " ") doHop();
   keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = true;
-  if (k === "e" && mode === "play" && !fun.isOpen()) { if (activeEx?.action) activeEx.action[1](); else if (activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener"); }
+  if (k === "e") interact();
   if (["arrowup", "arrowdown", " "].includes(k)) e.preventDefault();
 });
 addEventListener("keyup", e => { const k = e.key.toLowerCase(); keys[{ arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" }[k] || k] = false; });
 addEventListener("blur", () => { for (const k in keys) keys[k] = false; });
 addEventListener("wheel", e => { if (mode === "play") vz -= Math.max(-120, Math.min(120, e.deltaY)) * 0.05; }, { passive: true });
 addEventListener("pointermove", e => { if (e.pointerType === "mouse") mouseX = (e.clientX / innerWidth) * 2 - 1; });
-document.querySelectorAll("#pad button").forEach(b => {
+function interact() { if (mode !== "play" || fun.isOpen()) return; if (activeEx?.action) activeEx.action[1](); else if (activeEx?.links) window.open(activeEx.links[0][1], "_blank", "noopener"); }
+function doHop() { if (mode === "play" && hop === 0) { vy = 6.5; fun.blip([330, 494], .05, .02); } }
+$("tact").addEventListener("pointerdown", (e) => { e.preventDefault(); interact(); });
+$("hop").addEventListener("pointerdown", (e) => { e.preventDefault(); doHop(); });
+{ // drag anywhere on the picture: up/down rides, left/right steers
+  const cv = $("gl"); let id = null, x0 = 0, y0 = 0;
+  const clear = () => { id = null; keys.w = keys.s = keys.a = keys.d = false; mouseX = 0; $("stick").classList.remove("on"); };
+  cv.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" || mode !== "play") return; id = e.pointerId; x0 = e.clientX; y0 = e.clientY; cv.setPointerCapture(id);
+    const st = $("stick"); st.style.left = x0 + "px"; st.style.top = y0 + "px"; st.classList.add("on"); st.firstElementChild.style.transform = ""; });
+  cv.addEventListener("pointermove", (e) => { if (e.pointerId !== id) return; const dx = e.clientX - x0, dy = e.clientY - y0;
+    keys.w = dy < -16; keys.s = dy > 16; keys.a = dx < -26; keys.d = dx > 26; mouseX = Math.max(-1, Math.min(1, dx / 110));
+    const m = Math.min(1, 44 / Math.hypot(dx, dy || 1)); $("stick").firstElementChild.style.transform = `translate(${dx * m}px,${dy * m}px)`; });
+  for (const ev of ["pointerup", "pointercancel"]) cv.addEventListener(ev, (e) => { if (e.pointerId === id) clear(); });
+}
+document.querySelectorAll("#pad button[data-k]").forEach(b => {
   const k = b.dataset.k;
   b.addEventListener("pointerdown", e => { e.preventDefault(); keys[k] = true; b.setPointerCapture(e.pointerId); });
   for (const ev of ["pointerup", "pointercancel"]) b.addEventListener(ev, () => { keys[k] = false; });
@@ -606,6 +626,7 @@ const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&g
 function showPanel(ex) {
   if (ex === activeEx) return; activeEx = ex;
   const p = $("panel");
+  $("tact").classList.toggle("on", !!(ex && (ex.action || ex.links)));
   if (!ex) { p.classList.remove("on"); return; }
   touched.add(ex);
   p.innerHTML = `<h3>${esc(ex.title)}</h3>` + ex.lines.map(l => `<p>${esc(l)}</p>`).join("") +
@@ -664,8 +685,12 @@ function chasePose() {
   chase.set(track.cx + lx * .55 - Math.sin(lookYaw) * 2.5, 5.6, pos.z + 10.5);
   look.set(track.cx + lx * .8 + Math.sin(lookYaw) * 12, 3.4, pos.z - 11);
 }
+let fpsN = 0, fpsT = 0, lastMode = "";
 function tick() {
-  const now = performance.now(), dt = Math.min((now - last) / 1000, .05); last = now; t += dt;
+  const now = performance.now(), raw = (now - last) / 1000, dt = Math.min(raw, .05); last = now; t += dt;
+  if (mode !== lastMode) { lastMode = mode; document.body.classList.toggle("playing", mode === "play" || mode === "warp"); }
+  // adaptive quality: if two seconds of play average under 24 fps, render fewer pixels (down to 55%)
+  if (mode === "play" && !document.hidden && raw < .5) { fpsN++; fpsT += raw; if (fpsT > 2) { const fps = fpsN / fpsT; fpsN = fpsT = 0; if (fps < 24 && qScale > .56) { qScale = Math.max(.55, qScale * .8); resize(); } } }
 
   if (mode === "enter") {
     enterT += dt; vz = -13; pos.z += vz * dt;
@@ -753,4 +778,4 @@ function tick() {
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(tick);
-window.__prom = { get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J, goRoom, rooms: () => [...ROOMS.keys()], fun, seen, st, CHAMBERS };   // handy for debugging
+window.__prom = { get q() { return qScale; }, get mode() { return mode; }, pos, start, keys, L_END, flash: () => flash, wardrobe, back: J.backDoor, WZ, J, goRoom, rooms: () => [...ROOMS.keys()], fun, seen, st, CHAMBERS };   // handy for debugging

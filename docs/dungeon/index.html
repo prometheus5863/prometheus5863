@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#120d1f">
+<meta name="mobile-web-app-capable" content="yes">
 <title>PROMDOM · The Ride</title>
 <meta name="description" content="Ride through the castle in 3D: projects, skills and lore on the walls.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='6' y='9' width='4' height='7' fill='%235a3520'/><rect x='5' y='4' width='6' height='5' fill='%23e8590c'/><rect x='7' y='1' width='2' height='4' fill='%23f2c14e'/></svg>">
@@ -57,7 +59,27 @@ button{font:inherit;cursor:pointer}
 #pad{position:fixed;right:14px;bottom:14px;z-index:6;display:none;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,52px);gap:6px}
 #pad button{background:rgba(139,30,30,.85);color:var(--parch);border:0;font-family:PS2P;font-size:14px;box-shadow:0 0 0 3px var(--goldd)}
 #pad button:active{background:var(--crim2)}
-@media (pointer:coarse){#pad{display:grid}#panel{bottom:140px;font-size:17px;max-height:32vh;overflow:auto;touch-action:pan-y}#hint{display:none!important}#toasts{bottom:auto;top:60px}}
+.yt{display:none}body.touch .yt{display:inline}body.touch .nt{display:none}
+#tact{visibility:hidden;background:rgba(47,107,47,.9)!important}#tact.on{visibility:visible;animation:bl 1s steps(1) infinite}
+#stick{position:fixed;z-index:4;width:96px;height:96px;margin:-48px 0 0 -48px;border:3px solid rgba(212,162,76,.55);border-radius:50%;display:none;pointer-events:none}
+#stick.on{display:block}#stick i{position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px;border-radius:50%;background:rgba(242,193,78,.7)}
+#hud{padding-top:max(10px,env(safe-area-inset-top));padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+body.touch #hint{display:none!important}
+body.touch.playing #pad{display:grid}
+body.touch #pad{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}
+body.touch #panel .k{display:none}
+body.touch #panel{font-size:17px;overflow:auto;touch-action:pan-y;padding:10px 14px}
+body.touch #panel .links a{display:inline-block;padding:6px 0}
+body.touch #toasts{bottom:auto;top:calc(52px + env(safe-area-inset-top))}
+/* phone held upright: panel sits above the pad */
+@media (pointer:coarse) and (orientation:portrait){#panel{bottom:calc(146px + env(safe-area-inset-bottom));max-height:27vh}}
+/* phone on its side: panel takes the left half, pad stays on the right, the rider shows between and above */
+@media (pointer:coarse) and (orientation:landscape){
+  #panel{left:max(10px,env(safe-area-inset-left));transform:none;bottom:10px;width:min(52vw,460px);max-height:46vh;font-size:16px}
+  #pad{grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,46px)}
+  #hud{padding-top:6px;padding-bottom:6px}#pix{display:none}
+  #title{padding-bottom:4vh}#title .go{margin-top:12px}
+}
 
 #toasts{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;flex-direction:column;gap:8px}
 .toast{background:#100c0a;border:4px solid var(--gold);padding:8px 12px;font-size:17px;max-width:260px}
@@ -70,7 +92,7 @@ button{font:inherit;cursor:pointer}
 #coins+.hbtn{margin-left:0}
 .ov{position:fixed;inset:0;z-index:8;display:none;align-items:center;justify-content:center;background:rgba(8,5,12,.72);padding:12px;touch-action:auto}
 .ov.on{display:flex}
-.ovin{position:relative;width:min(880px,100%);max-height:calc(100vh - 24px);overflow:auto;background:var(--parch);color:var(--ink);padding:18px 20px;
+.ovin{position:relative;width:min(880px,100%);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:auto;background:var(--parch);color:var(--ink);padding:18px 20px;
   box-shadow:0 0 0 4px var(--gold),0 0 0 8px var(--goldd),10px 14px 0 4px rgba(0,0,0,.5);touch-action:pan-y}
 .ovin h2{font-size:13px;color:var(--crim);margin:0 0 14px}
 .ovx{position:absolute;right:10px;top:10px;background:var(--crim);color:var(--parch);border:0;padding:6px 8px;font-size:10px}
@@ -106,7 +128,7 @@ button{font:inherit;cursor:pointer}
 <div id="title">
   <h1>PROMDOM</h1>
   <div class="nm">HARSH VARDHAN GURURANI</div>
-  <div class="go">▶ CLICK OR PRESS ANY KEY TO RIDE IN</div>
+  <div class="go"><span class="nt">▶ CLICK OR PRESS ANY KEY TO RIDE IN</span><span class="yt">▶ TAP TO RIDE IN</span></div>
 </div>
 
 <div id="hint"><span class="k">W</span> <span class="k">S</span> or scroll to ride · <span class="k">A</span> <span class="k">D</span> to steer · mouse to look · <span class="k">E</span> interact · <span class="k">M</span> map · <span class="k">C</span> build · <span class="k">SPACE</span> hop</div>
@@ -114,10 +136,11 @@ button{font:inherit;cursor:pointer}
 <div id="toasts"></div>
 <div id="pad">
   <button data-k="a">◀</button><button data-k="w">▲</button><button data-k="d">▶</button>
-  <span></span><button data-k="s">▼</button><span></span>
+  <button id="hop" title="hop">⤒</button><button data-k="s">▼</button><button id="tact" title="interact">E</button>
 </div>
 <div id="map" class="ov"><div class="ovin"><button class="ovx px">✕</button><h2 class="px">MAP · QUICK TRAVEL</h2><div id="mapbody"></div></div></div>
 <div id="build" class="ov"><div class="ovin"><button class="ovx px">✕</button><h2 class="px">CHARACTER BUILD</h2><div id="buildbody"></div></div></div>
+<div id="stick"><i></i></div>
 <div id="fade"></div>
 <div id="err"><div><p class="px" style="color:var(--gold2)">THE GATE IS SEALED</p><p>This browser can't run the 3D castle.</p><p><a class="hbtn" href="../">TAKE THE STAIRS (2D)</a></p></div></div>
 
